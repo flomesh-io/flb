@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps/polx"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps/polx"
 )
 
 // PolDpWorkQ - work queue entry for policer related operation

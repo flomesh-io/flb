@@ -1,6 +1,6 @@
 package nh
 
-import "github.comflomesh-io/flb/pkg/maps"
+import "github.com/flomesh-io/flb/pkg/maps"
 
 type Value Act
 

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps"
-	"github.comflomesh-io/flb/pkg/maps/mirr"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps"
+	"github.com/flomesh-io/flb/pkg/maps/mirr"
 )
 
 // MirrDpWorkQ - work queue entry for mirror operation

@@ -1,6 +1,6 @@
 package api
 
-import nlf "github.comflomesh-io/flb/pkg/netlink"
+import nlf "github.com/flomesh-io/flb/pkg/netlink"
 
 // This file implements interface defined in NetHookInterface
 // The implementation is thread-safe and can be called by multiple-clients at once

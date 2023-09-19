@@ -1,8 +1,8 @@
 package netlink
 
 import (
+	nlf "github.com/flomesh-io/flb/pkg/netlink"
 	nlp "github.com/vishvananda/netlink"
-	nlf "github.comflomesh-io/flb/pkg/netlink"
 )
 
 var hooks nlf.NetHookInterface

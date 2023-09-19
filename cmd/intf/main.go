@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.comflomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/pkg/api"
 )
 
 func main() {

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps/intf"
-	"github.comflomesh-io/flb/pkg/maps/txintf"
-	"github.comflomesh-io/flb/pkg/tk"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps/intf"
+	"github.com/flomesh-io/flb/pkg/maps/txintf"
+	"github.com/flomesh-io/flb/pkg/tk"
 )
 
 // PortProp - Defines auxiliary port properties

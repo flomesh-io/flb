@@ -6,11 +6,11 @@ import (
 	"net"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps"
-	"github.comflomesh-io/flb/pkg/maps/nh"
-	"github.comflomesh-io/flb/pkg/tk"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps"
+	"github.com/flomesh-io/flb/pkg/maps/nh"
+	"github.com/flomesh-io/flb/pkg/tk"
 )
 
 // NextHopDpWorkQ - work queue entry for nexthop operation

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.comflomesh-io/flb/netlink"
-	"github.comflomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/netlink"
+	"github.com/flomesh-io/flb/pkg/api"
 )
 
 func main() {

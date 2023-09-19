@@ -1,8 +1,8 @@
 package nat
 
 import (
-	"github.comflomesh-io/flb/pkg/config"
-	"github.comflomesh-io/flb/pkg/maps"
+	"github.com/flomesh-io/flb/pkg/config"
+	"github.com/flomesh-io/flb/pkg/maps"
 )
 
 type Value Acts

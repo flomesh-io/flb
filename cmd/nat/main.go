@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.comflomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/pkg/api"
 )
 
 func main() {

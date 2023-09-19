@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps"
-	"github.comflomesh-io/flb/pkg/maps/dmac"
-	"github.comflomesh-io/flb/pkg/maps/smac"
-	"github.comflomesh-io/flb/pkg/tk"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps"
+	"github.com/flomesh-io/flb/pkg/maps/dmac"
+	"github.com/flomesh-io/flb/pkg/maps/smac"
+	"github.com/flomesh-io/flb/pkg/tk"
 )
 
 // DpTunT - type of a dp tunnel

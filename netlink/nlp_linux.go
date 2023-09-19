@@ -14,8 +14,8 @@ import (
 	"syscall"
 	"time"
 
+	nlf "github.com/flomesh-io/flb/pkg/netlink"
 	nlp "github.com/vishvananda/netlink"
-	nlf "github.comflomesh-io/flb/pkg/netlink"
 	"golang.org/x/sys/unix"
 )
 

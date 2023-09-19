@@ -12,7 +12,7 @@ import (
 	"unsafe"
 
 	"github.com/cilium/ebpf"
-	"github.comflomesh-io/flb/internal"
+	"github.com/flomesh-io/flb/internal"
 )
 
 var (

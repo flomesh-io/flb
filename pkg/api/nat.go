@@ -7,11 +7,11 @@ import (
 	"net"
 	"unsafe"
 
-	"github.comflomesh-io/flb/pkg/bpf"
-	"github.comflomesh-io/flb/pkg/config"
-	"github.comflomesh-io/flb/pkg/consts"
-	"github.comflomesh-io/flb/pkg/maps/nat"
-	"github.comflomesh-io/flb/pkg/tk"
+	"github.com/flomesh-io/flb/pkg/bpf"
+	"github.com/flomesh-io/flb/pkg/config"
+	"github.com/flomesh-io/flb/pkg/consts"
+	"github.com/flomesh-io/flb/pkg/maps/nat"
+	"github.com/flomesh-io/flb/pkg/tk"
 )
 
 // NatT - type of NAT
