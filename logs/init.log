@@ -1,0 +1,941 @@
+Starting fsm-xlb dev 6cf4f4673f3551dd8b126878ef999e1cee3a34cb 2023-09-15-02:10
+INFO: xdp_link_detach() no curr XDP prog on ifindex:4
+02:10:26 DEBUG xlb_libdp.c:2340: ntc filter del dev flb0 ingress 2>&1
+RTNETLINK answers: Invalid argument
+We have an error talking to the kernel
+02:10:26 DEBUG xlb_libdp.c:2397: NR 0 PSEC xdp_packet_hook /opt/fsmxlb/llb_xdp_main.o
+libbpf: Error in bpf_create_map_xattr(cpu_map):ERROR: strerror_r(-524)=22(-524). Retrying without BTF.
+libbpf: Error in bpf_create_map_xattr(pkt_ring):ERROR: strerror_r(-524)=22(-524). Retrying without BTF.
+libbpf: Error in bpf_create_map_xattr(tx_intf_map):ERROR: strerror_r(-524)=22(-524). Retrying without BTF.
+libbpf: Error in bpf_create_map_xattr(nh_map):Invalid argument(-22). Retrying without BTF.
+libbpf: Error in bpf_create_map_xattr(xctk):ERROR: strerror_r(-524)=22(-524). Retrying without BTF.
+02:10:31 DEBUG xlb_libdp.c:2164: llb_link_prop_add: IF-flb0 added idx 0 type 1
+02:10:31 DEBUG xlb_libdp.c:2416: Setting up for flb0|xdp_packet_hook
+02:10:31 TRACE xlb_libdp.c:616: intf_map: 13
+02:10:31 TRACE xlb_libdp.c:616: intf_stats_map: 14
+02:10:31 TRACE xlb_libdp.c:616: bd_stats_map: 15
+02:10:31 TRACE xlb_libdp.c:616: smac_map: 22
+02:10:31 TRACE xlb_libdp.c:616: tmac_map: 24
+02:10:31 TRACE xlb_libdp.c:616: ct_map: 27
+02:10:31 TRACE xlb_libdp.c:616: rt_v4_map: 31
+02:10:31 TRACE xlb_libdp.c:616: rt_v6_map: 33
+02:10:31 TRACE xlb_libdp.c:616: nh_map: 26
+02:10:31 TRACE xlb_libdp.c:616: dmac_map: 23
+02:10:31 TRACE xlb_libdp.c:616: tx_intf_map: 19
+02:10:31 TRACE xlb_libdp.c:616: mirr_map: 35
+02:10:31 TRACE xlb_libdp.c:616: tx_intf_stats_map: 20
+02:10:31 TRACE xlb_libdp.c:616: tx_bd_stats_map: 21
+02:10:31 TRACE xlb_libdp.c:616: pkt_ring: 16
+02:10:31 TRACE xlb_libdp.c:616: rt_v4_stats_map: 32
+02:10:31 TRACE xlb_libdp.c:616: rt_v6_stats_map: 34
+02:10:31 TRACE xlb_libdp.c:616: ct_stats_map: 28
+02:10:31 TRACE xlb_libdp.c:616: tmac_stats_map: 25
+02:10:31 TRACE xlb_libdp.c:616: fc_v4_map: 38
+02:10:31 TRACE xlb_libdp.c:616: fc_v4_stats_map: 39
+02:10:31 TRACE xlb_libdp.c:616: pgm_tbl: 42
+02:10:31 TRACE xlb_libdp.c:616: polx_map: 43
+02:10:31 TRACE xlb_libdp.c:616: nat_map: 29
+02:10:31 TRACE xlb_libdp.c:616: nat_stats_map: 30
+02:10:31 TRACE xlb_libdp.c:616: sess_v4_map: 36
+02:10:31 TRACE xlb_libdp.c:616: sess_v4_stats_map: 37
+02:10:31 TRACE xlb_libdp.c:616: fw_v4_map: 40
+02:10:31 TRACE xlb_libdp.c:616: fw_v4_stats_map: 41
+02:10:31 TRACE xlb_libdp.c:616: crc32c_map: 45
+02:10:31 TRACE xlb_libdp.c:616: ct_ctr: 47
+02:10:31 TRACE xlb_libdp.c:616: cpu_map: 12
+02:10:31 ERROR xlb_libdp.c:739: Failed to set max entries for cpu_map map: Unknown error 524
+02:10:31 TRACE xlb_libdp.c:616: live_cpu_map: 11
+libbpf: failed to statfs /opt/fsmxlb/dp/bpf: No such file or directory
+02:10:31 ERROR xlb_libdp.c:754: /opt/fsmxlb/dp/bpf: Unpin maps failed
+02:10:31 DEBUG xlb_libdp.c:2239: llb_psec_add: SEC-tc_packet_hook0 added idx 0
+02:10:31 DEBUG xlb_libdp.c:2397: NR 0 PSEC tc_packet_hook0 /opt/fsmxlb/llb_ebpf_main.o
+02:10:31 DEBUG xlb_libdp.c:2306: ntc qdisc add dev flb0 clsact 2>&1 >/dev/null
+AUTOLOAD: sec tc_packet_hook1 prog tc_packet_func
+AUTOLOAD: sec tc_packet_hook2 prog tc_packet_func_slow
+AUTOLOAD: sec tc_packet_hook3 prog tc_packet_func_fw
+AUTOLOAD: sec tc_packet_hook4 prog tc_csum_func1
+AUTOLOAD: sec tc_packet_hook5 prog tc_csum_func2
+AUTOLOAD: sec tc_packet_hook6 prog tc_slow_unp_func
+02:10:32 DEBUG xlb_libdp.c:2311: ntc filter add dev flb0 ingress bpf da obj /opt/fsmxlb/llb_ebpf_main.o sec tc_packet_hook0 2>&1
+02:10:32 DEBUG xlb_libdp.c:2140: llb_link_prop_add: IF-flb0 ref idx 0:1 type 2
+2023-09-15 02:10:32 ebpf unload - lo
+02:10:32 DEBUG xlb_libdp.c:2340: ntc filter del dev lo ingress 2>&1
+RTNETLINK answers: Invalid argument
+We have an error talking to the kernel
+2023-09-15 02:10:32 ebpf unload - ens33
+02:10:32 DEBUG xlb_libdp.c:2340: ntc filter del dev ens33 ingress 2>&1
+RTNETLINK answers: Invalid argument
+We have an error talking to the kernel
+2023-09-15 02:10:32 ebpf unload - ens36
+02:10:32 DEBUG xlb_libdp.c:2340: ntc filter del dev ens36 ingress 2>&1
+RTNETLINK answers: Invalid argument
+We have an error talking to the kernel
+2023/09/15 02:10:32 Serving fsmxlb rest API at http://[::]:11111
+2023/09/15 02:10:32 Serving fsmxlb rest API at https://[::]:8091
+2023-09-15 02:10:35 [NLP] Getting device info
+2023-09-15 02:10:35 [NLP] ADD Device lo mac([0 0 0 0 0 0]) attrs(&{1 65536 1000 lo  up|loopback 65609 0 0 <nil>  0xc0001ae600 0 0xc000194168 loopback <nil> unknown -1 1 1 65536 65535 [] 0 <nil>}) info recvd
+2023-09-15 02:10:35 port add - vlan3801 isPvid false
+2023-09-15 02:10:35 port added - vlan3801:2
+2023-09-15 02:10:35 vlan 3801 bd created
+2023-09-15 02:10:35 port added - lo:1
+2023-09-15 02:10:35 [NLP] Port lo, [0 0 0 0 0 0], true, 65536 add [OK]
+2023-09-15 02:10:35 rt added - 127.0.0.0/8:root
+2023-09-15 02:10:35 [NLP] IPv4 Address 127.0.0.1/8 Port lo added
+2023-09-15 02:10:35 rt added - ::1/128:root
+2023-09-15 02:10:35 ifa added ::1:lo
+2023-09-15 02:10:35 [NLP] IPv4 Address ::1/128 Port lo added
+2023-09-15 02:10:35 neigh rtpair - 0.0.0.0/32->0.0.0.0
+2023-09-15 02:10:35 rt added - 0.0.0.0/32:root
+2023-09-15 02:10:35 neigh added - 0.0.0.0:root (1)
+2023-09-15 02:10:35 rt add - ::1/128:root exists
+2023-09-15 02:10:35 [NLP] RT  ::1/128 add failed-rt exists
+2023-09-15 02:10:35 [NLP] ADD Device ens33 mac([0 12 41 121 171 87]) attrs(&{2 1340 1000 ens33 00:0c:29:79:ab:57 up|broadcast|multicast 69699 0 0 <nil>  0xc0001ae780 0 0xc000194180 ether <nil> up -1 1 1 65536 65535 [] 0 <nil>}) info recvd
+2023-09-15 02:10:35 port add - vlan3803 isPvid false
+2023-09-15 02:10:35 port added - vlan3803:4
+2023-09-15 02:10:35 vlan 3803 bd created
+2023-09-15 02:10:35 port added - ens33:3
+2023-09-15 02:10:35 [NLP] Port ens33, [0 12 41 121 171 87], true, 1340 add [OK]
+2023-09-15 02:10:35 rt added - 192.168.127.0/24:root
+2023-09-15 02:10:35 [NLP] IPv4 Address 192.168.127.11/24 Port ens33 added
+2023-09-15 02:10:35 rt added - fe80::/64:root
+2023-09-15 02:10:35 ifa added fe80::20c:29ff:fe79:ab57:ens33
+2023-09-15 02:10:35 [NLP] IPv4 Address fe80::20c:29ff:fe79:ab57/64 Port ens33 added
+2023-09-15 02:10:35 neigh rtpair - 192.168.127.1/32->192.168.127.1
+2023-09-15 02:10:35 rt added - 192.168.127.1/32:root
+2023-09-15 02:10:35 added fdb ent, {[84 82 132 195 119 217] 3803}
+2023-09-15 02:10:35 neigh added - 192.168.127.1:root (2)
+2023-09-15 02:10:35 neigh rtpair - ff02::16/128->ff02::16
+2023-09-15 02:10:35 rt added - ff02::16/128:root
+2023-09-15 02:10:35 added fdb ent, {[51 51 0 0 0 22] 3803}
+2023-09-15 02:10:35 neigh added - ff02::16:root (3)
+2023-09-15 02:10:35 neigh rtpair - ff02::2/128->ff02::2
+2023-09-15 02:10:35 rt added - ff02::2/128:root
+2023-09-15 02:10:35 added fdb ent, {[51 51 0 0 0 2] 3803}
+2023-09-15 02:10:35 neigh added - ff02::2:root (4)
+2023-09-15 02:10:35 neigh rtpair - ff02::1:ff79:ab57/128->ff02::1:ff79:ab57
+2023-09-15 02:10:35 rt added - ff02::1:ff79:ab57/128:root
+2023-09-15 02:10:35 added fdb ent, {[51 51 255 121 171 87] 3803}
+2023-09-15 02:10:35 neigh added - ff02::1:ff79:ab57:root (5)
+2023-09-15 02:10:35 neigh rtpair - 0.0.0.0/0->192.168.127.1
+2023-09-15 02:10:35 rt added - 0.0.0.0/0:root
+2023-09-15 02:10:35 [NLP] RT  0.0.0.0/0 via 192.168.127.1 added
+2023-09-15 02:10:35 rt add - 192.168.127.0/24:root exists
+2023-09-15 02:10:35 [NLP] RT  192.168.127.0/24 add failed-rt exists
+2023-09-15 02:10:35 rt add - fe80::/64:root exists
+2023-09-15 02:10:35 [NLP] RT  fe80::/64 add failed-rt exists
+2023-09-15 02:10:35 [NLP] ADD Device ens36 mac([0 12 41 121 171 97]) attrs(&{3 1500 1000 ens36 00:0c:29:79:ab:61 up|broadcast|multicast 69699 0 0 <nil>  0xc0001ae900 0 0xc000194198 ether <nil> up -1 1 1 65536 65535 [] 0 <nil>}) info recvd
+2023-09-15 02:10:35 port add - vlan3805 isPvid false
+2023-09-15 02:10:35 port added - vlan3805:6
+2023-09-15 02:10:35 vlan 3805 bd created
+2023-09-15 02:10:35 port added - ens36:5
+2023-09-15 02:10:35 [NLP] Port ens36, [0 12 41 121 171 97], true, 1500 add [OK]
+2023-09-15 02:10:35 rt added - 192.168.226.0/24:root
+2023-09-15 02:10:35 [NLP] IPv4 Address 192.168.226.11/24 Port ens36 added
+2023-09-15 02:10:35 rt add - fe80::/64:root exists
+2023-09-15 02:10:35  - fe80::20c:29ff:fe79:ab61:ens36 self-rt error
+2023-09-15 02:10:35 [NLP] IPv4 Address fe80::20c:29ff:fe79:ab61/64 Port ens36 failed self-route add error
+2023-09-15 02:10:35 neigh rtpair - 192.168.226.1/32->192.168.226.1
+2023-09-15 02:10:35 rt added - 192.168.226.1/32:root
+2023-09-15 02:10:35 added fdb ent, {[94 82 48 106 195 100] 3805}
+2023-09-15 02:10:35 neigh added - 192.168.226.1:root (6)
+2023-09-15 02:10:35 neigh rtpair - ff02::1:ff79:ab61/128->ff02::1:ff79:ab61
+2023-09-15 02:10:35 rt added - ff02::1:ff79:ab61/128:root
+2023-09-15 02:10:35 added fdb ent, {[51 51 255 121 171 97] 3805}
+2023-09-15 02:10:35 neigh added - ff02::1:ff79:ab61:root (7)
+2023-09-15 02:10:35 rt add - 192.168.226.0/24:root exists
+2023-09-15 02:10:35 [NLP] RT  192.168.226.0/24 add failed-rt exists
+2023-09-15 02:10:35 rt add - fe80::/64:root exists
+2023-09-15 02:10:35 [NLP] RT  fe80::/64 add failed-rt exists
+2023-09-15 02:10:35 [NLP] ADD Device flb0 mac([198 211 102 50 55 92]) attrs(&{4 1500 1000 flb0 c6:d3:66:32:37:5c up|broadcast|multicast 69699 0 0 <nil>  0xc0001aea80 0 0xc0001941b0 ether <nil> unknown -1 1 1 65536 65535 [] 0 <nil>}) info recvd
+2023-09-15 02:10:35 port add - vlan3807 isPvid false
+2023-09-15 02:10:35 port added - vlan3807:8
+2023-09-15 02:10:35 vlan 3807 bd created
+2023-09-15 02:10:35 port added - flb0:7
+2023-09-15 02:10:35 [NLP] Port flb0, [198 211 102 50 55 92], true, 1500 add [OK]
+2023-09-15 02:10:35 rt add - fe80::/64:root exists
+2023-09-15 02:10:35 ifa add - fe80::c4d3:66ff:fe32:375c:flb0 self-rt error
+2023-09-15 02:10:35 [NLP] IPv4 Address fe80::c4d3:66ff:fe32:375c/64 Port flb0 failed self-route add error
+2023-09-15 02:10:35 neigh rtpair - ff02::1:ff32:375c/128->ff02::1:ff32:375c
+2023-09-15 02:10:35 rt added - ff02::1:ff32:375c/128:root
+2023-09-15 02:10:35 added fdb ent, {[51 51 255 50 55 92] 3807}
+2023-09-15 02:10:35 neigh added - ff02::1:ff32:375c:root (8)
+2023-09-15 02:10:35 rt add - fe80::/64:root exists
+2023-09-15 02:10:35 [NLP] RT  fe80::/64 add failed-rt exists
+2023-09-15 02:10:35 [NLP] nlp get done
+2023-09-15 02:10:35 [NLP] Link msgs subscribed
+2023-09-15 02:10:35 [NLP] Addr msgs subscribed
+2023-09-15 02:10:35 [NLP] Neigh msgs subscribed
+2023-09-15 02:10:35 [NLP] Route msgs subscribed
+2023-09-15 02:10:35 [NLP] NLP Subscription done
+2023-09-15 02:10:35 [NLP] No EndPoint config file : stat /etc/fsmxlb/EPconfig.txt: no such file or directory
+2023-09-15 02:10:35 [NLP] EndPoint done
+2023-09-15 02:10:35 [NLP] No load balancer config file : stat /etc/fsmxlb/lbconfig.txt: no such file or directory
+2023-09-15 02:10:35 [NLP] LoadBalancer done
+2023-09-15 02:10:35 [NLP] No Session config file : stat /etc/fsmxlb/sessionconfig.txt: no such file or directory
+2023-09-15 02:10:35 [NLP] Session done
+2023-09-15 02:10:35 [NLP] No UlCl config file : stat /etc/fsmxlb/sessionulclconfig.txt: no such file or directory
+2023-09-15 02:10:35 [NLP] Session UlCl done
+2023-09-15 02:10:35 [NLP] No Firewall config file : stat /etc/fsmxlb/FWconfig.txt: no such file or directory
+2023-09-15 02:10:35 [NLP] Firewall done
+2023-09-15 02:10:35 [NLP] LbSessionGet done
+*xlbnet.PortDpWorkQ {
+ "Work": 1,
+ "Status": null,
+ "OsPortNum": 1,
+ "PortNum": 1,
+ "IngVlan": 0,
+ "SetBD": 3801,
+ "SetZoneNum": 1,
+ "Prop": 0,
+ "SetMirr": 0,
+ "SetPol": 0,
+ "LoadEbpf": "lo"
+}
+
+
+2023-09-15 02:10:36 ebpf intfmap added - 1 vlan 0 -> 1
+2023-09-15 02:10:36 ebpf txintfmap added - 1 -> 1
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "127.0.0.0",
+  "Mask": "/wAAAA=="
+ },
+ "RtType": 4,
+ "RtMark": 1,
+ "NMark": -1
+}
+
+
+*xlbnet.RouterMacDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "PortNum": 1,
+ "BD": 0,
+ "TunID": 0,
+ "TunType": 0,
+ "NhNum": 0
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "::1",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 4,
+ "RtMark": 2,
+ "NMark": -1
+}
+
+
+*xlbnet.RouterMacDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "PortNum": 1,
+ "BD": 0,
+ "TunID": 0,
+ "TunType": 0,
+ "NhNum": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 1,
+ "Resolved": false,
+ "DstAddr": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "SrcAddr": [
+  0,
+  0,
+  0,
+  0,
+  0,
+  0
+ ],
+ "BD": 3801
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "0.0.0.0",
+  "Mask": "/////w=="
+ },
+ "RtType": 9,
+ "RtMark": 3,
+ "NMark": 1
+}
+
+
+*xlbnet.PortDpWorkQ {
+ "Work": 1,
+ "Status": null,
+ "OsPortNum": 2,
+ "PortNum": 3,
+ "IngVlan": 0,
+ "SetBD": 3803,
+ "SetZoneNum": 1,
+ "Prop": 0,
+ "SetMirr": 0,
+ "SetPol": 0,
+ "LoadEbpf": "ens33"
+}
+
+
+02:10:36 DEBUG xlb_libdp.c:2397: NR 1 PSEC tc_packet_hook0 /opt/fsmxlb/llb_ebpf_main.o
+02:10:36 DEBUG xlb_libdp.c:2306: ntc qdisc add dev ens33 clsact 2>&1 >/dev/null
+AUTOLOAD: sec tc_packet_hook1 prog tc_packet_func
+AUTOLOAD: sec tc_packet_hook2 prog tc_packet_func_slow
+AUTOLOAD: sec tc_packet_hook3 prog tc_packet_func_fw
+AUTOLOAD: sec tc_packet_hook4 prog tc_csum_func1
+AUTOLOAD: sec tc_packet_hook5 prog tc_csum_func2
+AUTOLOAD: sec tc_packet_hook6 prog tc_slow_unp_func
+02:10:36 DEBUG xlb_libdp.c:2311: ntc filter add dev ens33 ingress bpf da obj /opt/fsmxlb/llb_ebpf_main.o sec tc_packet_hook0 2>&1
+02:10:36 DEBUG xlb_libdp.c:2164: llb_link_prop_add: IF-ens33 added idx 1 type 2
+2023-09-15 02:10:36 ebpf intfmap added - 2 vlan 0 -> 3
+2023-09-15 02:10:36 ebpf txintfmap added - 3 -> 2
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "192.168.127.0",
+  "Mask": "////AA=="
+ },
+ "RtType": 4,
+ "RtMark": 4,
+ "NMark": -1
+}
+
+
+*xlbnet.RouterMacDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "PortNum": 3,
+ "BD": 0,
+ "TunID": 0,
+ "TunType": 0,
+ "NhNum": 0
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "fe80::",
+  "Mask": "//////////8AAAAAAAAAAA=="
+ },
+ "RtType": 4,
+ "RtMark": 5,
+ "NMark": -1
+}
+
+
+*xlbnet.RouterMacDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "PortNum": 3,
+ "BD": 0,
+ "TunID": 0,
+ "TunType": 0,
+ "NhNum": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 2,
+ "Resolved": true,
+ "DstAddr": [
+  84,
+  82,
+  132,
+  195,
+  119,
+  217
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "BD": 3803
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "192.168.127.1",
+  "Mask": "/////w=="
+ },
+ "RtType": 9,
+ "RtMark": 6,
+ "NMark": 2
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  84,
+  82,
+  132,
+  195,
+  119,
+  217
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 3,
+ "BD": 3803,
+ "Tagged": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 3,
+ "Resolved": true,
+ "DstAddr": [
+  51,
+  51,
+  0,
+  0,
+  0,
+  22
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "BD": 3803
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "ff02::16",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 9,
+ "RtMark": 7,
+ "NMark": 3
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  51,
+  51,
+  0,
+  0,
+  0,
+  22
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 3,
+ "BD": 3803,
+ "Tagged": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 4,
+ "Resolved": true,
+ "DstAddr": [
+  51,
+  51,
+  0,
+  0,
+  0,
+  2
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "BD": 3803
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "ff02::2",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 9,
+ "RtMark": 8,
+ "NMark": 4
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  51,
+  51,
+  0,
+  0,
+  0,
+  2
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 3,
+ "BD": 3803,
+ "Tagged": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 5,
+ "Resolved": true,
+ "DstAddr": [
+  51,
+  51,
+  255,
+  121,
+  171,
+  87
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  87
+ ],
+ "BD": 3803
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "ff02::1:ff79:ab57",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 9,
+ "RtMark": 9,
+ "NMark": 5
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  51,
+  51,
+  255,
+  121,
+  171,
+  87
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 3,
+ "BD": 3803,
+ "Tagged": 0
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "0.0.0.0",
+  "Mask": "AAAAAA=="
+ },
+ "RtType": 1,
+ "RtMark": 10,
+ "NMark": 2
+}
+
+
+*xlbnet.PortDpWorkQ {
+ "Work": 1,
+ "Status": null,
+ "OsPortNum": 3,
+ "PortNum": 5,
+ "IngVlan": 0,
+ "SetBD": 3805,
+ "SetZoneNum": 1,
+ "Prop": 0,
+ "SetMirr": 0,
+ "SetPol": 0,
+ "LoadEbpf": "ens36"
+}
+
+
+02:10:36 DEBUG xlb_libdp.c:2397: NR 1 PSEC tc_packet_hook0 /opt/fsmxlb/llb_ebpf_main.o
+02:10:36 DEBUG xlb_libdp.c:2306: ntc qdisc add dev ens36 clsact 2>&1 >/dev/null
+AUTOLOAD: sec tc_packet_hook1 prog tc_packet_func
+AUTOLOAD: sec tc_packet_hook2 prog tc_packet_func_slow
+AUTOLOAD: sec tc_packet_hook3 prog tc_packet_func_fw
+AUTOLOAD: sec tc_packet_hook4 prog tc_csum_func1
+AUTOLOAD: sec tc_packet_hook5 prog tc_csum_func2
+AUTOLOAD: sec tc_packet_hook6 prog tc_slow_unp_func
+02:10:37 DEBUG xlb_libdp.c:2311: ntc filter add dev ens36 ingress bpf da obj /opt/fsmxlb/llb_ebpf_main.o sec tc_packet_hook0 2>&1
+02:10:37 DEBUG xlb_libdp.c:2164: llb_link_prop_add: IF-ens36 added idx 2 type 2
+2023-09-15 02:10:37 ebpf intfmap added - 3 vlan 0 -> 5
+2023-09-15 02:10:37 ebpf txintfmap added - 5 -> 3
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "192.168.226.0",
+  "Mask": "////AA=="
+ },
+ "RtType": 4,
+ "RtMark": 11,
+ "NMark": -1
+}
+
+
+*xlbnet.RouterMacDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  97
+ ],
+ "PortNum": 5,
+ "BD": 0,
+ "TunID": 0,
+ "TunType": 0,
+ "NhNum": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 6,
+ "Resolved": true,
+ "DstAddr": [
+  94,
+  82,
+  48,
+  106,
+  195,
+  100
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  97
+ ],
+ "BD": 3805
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "192.168.226.1",
+  "Mask": "/////w=="
+ },
+ "RtType": 9,
+ "RtMark": 12,
+ "NMark": 6
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  94,
+  82,
+  48,
+  106,
+  195,
+  100
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 5,
+ "BD": 3805,
+ "Tagged": 0
+}
+
+
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 7,
+ "Resolved": true,
+ "DstAddr": [
+  51,
+  51,
+  255,
+  121,
+  171,
+  97
+ ],
+ "SrcAddr": [
+  0,
+  12,
+  41,
+  121,
+  171,
+  97
+ ],
+ "BD": 3805
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "ff02::1:ff79:ab61",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 9,
+ "RtMark": 13,
+ "NMark": 7
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  51,
+  51,
+  255,
+  121,
+  171,
+  97
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 5,
+ "BD": 3805,
+ "Tagged": 0
+}
+
+
+*xlbnet.PortDpWorkQ {
+ "Work": 1,
+ "Status": null,
+ "OsPortNum": 4,
+ "PortNum": 7,
+ "IngVlan": 0,
+ "SetBD": 3807,
+ "SetZoneNum": 1,
+ "Prop": 0,
+ "SetMirr": 0,
+ "SetPol": 0,
+ "LoadEbpf": "flb0"
+}
+
+
+2023-09-15 02:10:37 ebpf intfmap added - 4 vlan 0 -> 511
+2023-09-15 02:10:37 ebpf txintfmap added - 511 -> 4
+*xlbnet.NextHopDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "TunNh": false,
+ "TunID": 0,
+ "TunType": 0,
+ "RIP": "",
+ "SIP": "",
+ "NNextHopNum": 0,
+ "NextHopNum": 8,
+ "Resolved": true,
+ "DstAddr": [
+  51,
+  51,
+  255,
+  50,
+  55,
+  92
+ ],
+ "SrcAddr": [
+  198,
+  211,
+  102,
+  50,
+  55,
+  92
+ ],
+ "BD": 3807
+}
+
+
+*xlbnet.RouteDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "ZoneNum": 1,
+ "Dst": {
+  "IP": "ff02::1:ff32:375c",
+  "Mask": "/////////////////////w=="
+ },
+ "RtType": 9,
+ "RtMark": 14,
+ "NMark": 8
+}
+
+
+*xlbnet.L2AddrDpWorkQ {
+ "Work": 1,
+ "Status": 0,
+ "L2Addr": [
+  51,
+  51,
+  255,
+  50,
+  55,
+  92
+ ],
+ "Tun": 0,
+ "NhNum": 0,
+ "PortNum": 7,
+ "BD": 3807,
+ "Tagged": 0
+}
+
+
+2023-09-15 02:10:42 Get xsync()
