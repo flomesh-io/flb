@@ -9,21 +9,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps/polx"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// PolDpWorkQ - work queue entry for policer related operation
-type PolDpWorkQ struct {
-	Work   DpWorkT
-	Name   string
-	Mark   int
-	Cir    uint64
-	Pir    uint64
-	Cbs    uint64
-	Ebs    uint64
-	Color  bool
-	Srt    bool
-	Status *DpStatusT
-}
 
 // DpPolMod - routine to work on a ebpf policer change request
 func DpPolMod(w *PolDpWorkQ) int {
@@ -79,7 +66,7 @@ func DpPolMod(w *PolDpWorkQ) int {
 		dat := new(polx.Act)
 		bpf.UpdateMap(consts.DP_POL_MAP, &key, dat)
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(polx.Act)
 		if err := bpf.GetMap(consts.DP_POL_MAP, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")

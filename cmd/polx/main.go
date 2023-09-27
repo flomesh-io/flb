@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
-	polWorkQ := api.PolDpWorkQ{
-		Work: api.DpMapShow,
+	polWorkQ := PolDpWorkQ{
+		Work: DpCreate,
 		Mark: 8191,
 	}
 	ret := api.DpPolMod(&polWorkQ)

@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
-	routerMacWorkQ := api.RouterMacDpWorkQ{
-		Work:    api.DpMapShow,
+	routerMacWorkQ := RouterMacDpWorkQ{
+		Work:    DpCreate,
 		L2Addr:  [6]uint8{0, 12, 41, 121, 171, 87},
 		PortNum: 3,
 		BD:      0,

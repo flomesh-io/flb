@@ -11,24 +11,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/nh"
 	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// NextHopDpWorkQ - work queue entry for nexthop operation
-type NextHopDpWorkQ struct {
-	Work        DpWorkT
-	Status      *DpStatusT
-	TunNh       bool
-	TunID       uint32
-	TunType     DpTunT
-	RIP         net.IP
-	SIP         net.IP
-	NNextHopNum int
-	NextHopNum  int
-	Resolved    bool
-	DstAddr     [6]uint8
-	SrcAddr     [6]uint8
-	BD          int
-}
 
 // DpNextHopMod - routine to work on a ebpf next-hop change request
 func DpNextHopMod(w *NextHopDpWorkQ) int {
@@ -72,17 +56,21 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 			}
 		}
 
+		srcHwAddr := net.HardwareAddr(w.SrcAddr[:])
+		dstHwAddr := net.HardwareAddr(w.DstAddr[:])
 		err := bpf.UpdateMap(consts.DP_NH_MAP, key, dat)
 		if err != nil {
+			fmt.Printf("[DP] Nexthop %5d %s %s add[NOK] %x\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String(), err)
 			return consts.EbpfErrNhAdd
 		}
+		fmt.Printf("[DP] Nexthop %5d %s %s add[OK]\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String())
 		return 0
 	} else if w.Work == DpRemove {
 		dat := new(nh.Act)
 		// eBPF array elements cant be deleted. Instead we just reset it
 		bpf.UpdateMap(consts.DP_NH_MAP, key, dat)
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(nh.Act)
 		if err := bpf.GetMap(consts.DP_NH_MAP, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")

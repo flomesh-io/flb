@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
-	mirrWorkQ := api.MirrDpWorkQ{
-		Work: api.DpMapShow,
+	mirrWorkQ := MirrDpWorkQ{
+		Work: DpCreate,
 		Mark: 31,
 	}
 	ret := api.DpMirrMod(&mirrWorkQ)

@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"syscall"
 	"unsafe"
 
@@ -14,18 +13,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/maps/rt/rtv4"
 	"github.com/flomesh-io/flb/pkg/maps/rt/rtv6"
 	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// RouteDpWorkQ - work queue entry for rt operation
-type RouteDpWorkQ struct {
-	Work    DpWorkT
-	Status  *DpStatusT
-	ZoneNum int
-	Dst     net.IPNet
-	RtType  int
-	RtMark  int
-	NMark   int
-}
 
 // DpRouteMod - routine to work on a ebpf route change request
 func DpRouteMod(w *RouteDpWorkQ) int {
@@ -50,10 +39,10 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 
 		kPtr[0] = uint8(w.ZoneNum >> 8 & 0xff)
 		kPtr[1] = uint8(w.ZoneNum & 0xff)
-		kPtr[2] = uint8(w.Dst.IP[0])
-		kPtr[3] = uint8(w.Dst.IP[1])
-		kPtr[4] = uint8(w.Dst.IP[2])
-		kPtr[5] = uint8(w.Dst.IP[3])
+		kPtr[2] = uint8(w.Dst.IP[12])
+		kPtr[3] = uint8(w.Dst.IP[13])
+		kPtr[4] = uint8(w.Dst.IP[14])
+		kPtr[5] = uint8(w.Dst.IP[15])
 		key = key4
 		mapName = consts.DP_RTV4_MAP
 		statsMapName = consts.DP_RTV4_STATS_MAP
@@ -88,6 +77,7 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 
 		err := bpf.UpdateMap(mapName, key, dat)
 		if err != nil {
+			fmt.Printf("[DP] RT %s add[NOK] %v\n", w.Dst, err)
 			return consts.EbpfErrRt4Add
 		}
 		return 0
@@ -100,7 +90,7 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 			//C.llb_clear_map_stats(statsMapName, C.uint(w.RtMark))
 		}
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(rt.Act)
 		if err := bpf.GetMap(mapName, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")

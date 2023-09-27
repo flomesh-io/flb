@@ -1,15 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"net"
 
-	"github.com/flomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
 
-	natWorkQ := new(api.NatDpWorkQ)
+	meta := new(ArrayMeta)
+
+	natWorkQ := new(NatDpWorkQ)
 	natWorkQ.ZoneNum = 1
 	natWorkQ.ServiceIP = net.ParseIP("20.20.20.1")
 	natWorkQ.L4Port = 8080
@@ -21,7 +23,7 @@ func main() {
 	natWorkQ.NatType = 2
 	natWorkQ.EpSel = 1
 	natWorkQ.InActTo = 240
-	natWorkQ.EndPoints = make([]api.NatEP, 3)
+	natWorkQ.EndPoints = make([]NatEP, 3)
 
 	natWorkQ.EndPoints[0].XIP = net.ParseIP("31.31.31.1")
 	natWorkQ.EndPoints[0].RIP = net.ParseIP("0.0.0.0")
@@ -41,13 +43,9 @@ func main() {
 	natWorkQ.EndPoints[2].Weight = 1
 	natWorkQ.EndPoints[2].InActive = false
 
-	natWorkQ.Work = api.DpMapShow
+	natWorkQ.Work = DpCreate
 
-	ret := api.DpNatLbRuleMod(natWorkQ)
-	fmt.Println(ret)
+	meta.NatDpWorkQ = append(meta.NatDpWorkQ, *natWorkQ)
 
-	//bpf.ShowMap("pgm_tbl", new(uint32), new(uint32))
-	//bpf.ShowMap("cpu_map", new(uint32), new(uint32))
-	//bpf.ShowMap("live_cpu_map", new(uint32), new(uint32))
-	//bpf.ShowMap("nat_map", new(nat.Key), new(nat.Acts))
+	tk.Debug(meta)
 }

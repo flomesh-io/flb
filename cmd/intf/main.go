@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
-	portWorkQ := api.PortDpWorkQ{
-		Work:       api.DpMapShow,
+	portWorkQ := PortDpWorkQ{
+		Work:       DpCreate,
 		OsPortNum:  1,
 		PortNum:    1,
 		IngVlan:    0,

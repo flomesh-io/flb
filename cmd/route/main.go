@@ -5,12 +5,13 @@ import (
 	"net"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
 	_, dst, _ := net.ParseCIDR("31.31.31.0/24")
-	routeWorkQ := api.RouteDpWorkQ{
-		Work:    api.DpMapShow,
+	routeWorkQ := RouteDpWorkQ{
+		Work:    DpCreate,
 		ZoneNum: 1,
 		Dst:     *dst,
 		RtType:  4,

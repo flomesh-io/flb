@@ -4,11 +4,12 @@ import (
 	"fmt"
 
 	"github.com/flomesh-io/flb/pkg/api"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 func main() {
-	nextHopWorkQ := api.NextHopDpWorkQ{
-		Work:        api.DpMapShow,
+	nextHopWorkQ := NextHopDpWorkQ{
+		Work:        DpCreate,
 		TunNh:       false,
 		TunID:       0,
 		TunType:     0,
