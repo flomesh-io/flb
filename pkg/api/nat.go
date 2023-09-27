@@ -4,68 +4,19 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
-	"net"
-	"unsafe"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/config"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps/nat"
 	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// NatT - type of NAT
-type NatT uint8
-
-// nat type constants
-const (
-	DpSnat NatT = iota + 1
-	DpDnat
-	DpHsnat
-	DpHdnat
-	DpFullNat
-)
-
-// NatSel - type of nat end-point selection algorithm
-type NatSel uint8
-
-// nat selection algorithm constants
-const (
-	EpRR NatSel = iota + 1
-	EpHash
-	EpPrio
-)
-
-// NatEP - a nat end-point
-type NatEP struct {
-	XIP      net.IP
-	RIP      net.IP
-	XPort    uint16
-	Weight   uint8
-	InActive bool
-}
-
-// NatDpWorkQ - work queue entry for nat related operation
-type NatDpWorkQ struct {
-	Work      DpWorkT
-	Status    *DpStatusT
-	ZoneNum   int
-	ServiceIP net.IP
-	L4Port    uint16
-	BlockNum  uint16
-	DsrMode   bool
-	CsumDis   bool
-	Proto     uint8
-	Mark      int
-	NatType   NatT
-	EpSel     NatSel
-	InActTo   uint64
-	EndPoints []NatEP
-	SecIP     []net.IP
-}
 
 // DpNatLbRuleMod - routine to work on a ebpf nat-lb change request
 func DpNatLbRuleMod(w *NatDpWorkQ) int {
+	//bytes, _ := json.MarshalIndent(w, "", " ")
+	//fmt.Println(string(bytes))
 	key := new(nat.Key)
 
 	key.DAddr = [4]uint32{0, 0, 0, 0}
@@ -73,7 +24,8 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		key.DAddr[0] = tk.IPtonl(w.ServiceIP)
 		key.V6 = 0
 	} else {
-		tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&key.DAddr[0]), w.ServiceIP)
+		// todo benne pending
+		//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&key.DAddr[0]), w.ServiceIP)
 		key.V6 = 1
 	}
 	key.Mark = w.BlockNum
@@ -88,7 +40,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		} else if w.NatType == DpDnat || w.NatType == DpFullNat {
 			acts.Ca.ActType = consts.DP_SET_DNAT
 		} else {
-			fmt.Sprintf("[DP] LB rule %s add[NOK] - EbpfErrNat4Add\n", w.ServiceIP.String())
+			fmt.Printf("[DP] LB rule %s add[NOK] - EbpfErrNat4Add\n", w.ServiceIP.String())
 			return consts.EbpfErrNat4Add
 		}
 
@@ -119,16 +71,17 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			acts.Ca.OAux = 1
 		}
 
-		nxfa := &acts.Nxfrms[0]
-
-		for _, k := range w.EndPoints {
+		for idx, k := range w.EndPoints {
+			nxfa := &acts.Nxfrms[idx]
 			nxfa.WPrio = k.Weight
 			nxfa.NatXPort = tk.Htons(k.XPort)
 			if tk.IsNetIPv6(k.XIP.String()) {
-				tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatXIp[0]), k.XIP)
+				// todo benne pending
+				//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatXIp[0]), k.XIP)
 
 				if tk.IsNetIPv6(k.RIP.String()) {
-					tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatRIp[0]), k.RIP)
+					// todo benne pending
+					//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatRIp[0]), k.RIP)
 				}
 				nxfa.Nv6 = 1
 			} else {
@@ -140,8 +93,6 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			if k.InActive {
 				nxfa.Inactive = 1
 			}
-
-			nxfa = (*nat.MfXfrmInf)(tk.GetPtrOffset(unsafe.Pointer(nxfa), 0x28))
 		}
 
 		// Any unused end-points should be marked inactive
@@ -159,15 +110,15 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 
 		err := bpf.UpdateMap(consts.DP_NAT_MAP, key, acts)
 		if err != nil {
-			fmt.Sprintf("[DP] LB rule %s add[NOK]\n", w.ServiceIP.String())
+			fmt.Printf("[DP] LB rule %s add[NOK] %v\n", w.ServiceIP.String(), err)
 			return consts.EbpfErrTmacAdd
 		}
-		fmt.Sprintf("[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
+		fmt.Printf("[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
 		return 0
 	} else if w.Work == DpRemove {
 		bpf.DeleteMap(consts.DP_NAT_MAP, key)
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(nat.Acts)
 		if err := bpf.GetMap(consts.DP_NAT_MAP, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")

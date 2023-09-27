@@ -4,6 +4,7 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"unsafe"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
@@ -12,31 +13,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/maps/dmac"
 	"github.com/flomesh-io/flb/pkg/maps/smac"
 	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// DpTunT - type of a dp tunnel
-type DpTunT uint8
-
-// tunnel type constants
-const (
-	DpTunVxlan DpTunT = iota + 1
-	DpTunGre
-	DpTunGtp
-	DpTunStt
-	DpTunIPIP
-)
-
-// L2AddrDpWorkQ - work queue entry for l2 address operation
-type L2AddrDpWorkQ struct {
-	Work    DpWorkT
-	Status  *DpStatusT
-	L2Addr  [6]uint8
-	Tun     DpTunT
-	NhNum   int
-	PortNum int
-	BD      int
-	Tagged  int
-}
 
 // DpL2AddrMod - routine to work on a ebpf l2 addr request
 func DpL2AddrMod(w *L2AddrDpWorkQ) int {
@@ -68,18 +46,24 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 				l2va.OPort = uint16(w.PortNum)
 			}
 		}
-		serr := bpf.UpdateMap(consts.DP_SMAC_MAP, skey, sval)
-		if serr != nil {
+
+		hwAddr := net.HardwareAddr(w.L2Addr[:])
+		sErr := bpf.UpdateMap(consts.DP_SMAC_MAP, skey, sval)
+		if sErr != nil {
+			fmt.Printf("[DP] L2 SMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
 			return consts.EbpfErrL2AddrAdd
 		}
 
 		if w.Tun == 0 {
-			derr := bpf.UpdateMap(consts.DP_DMAC_MAP, dkey, dval)
-			if derr != nil {
+			dErr := bpf.UpdateMap(consts.DP_DMAC_MAP, dkey, dval)
+			if dErr != nil {
+				fmt.Printf("[DP] L2 DMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
 				bpf.DeleteMap(consts.DP_SMAC_MAP, skey)
 				return consts.EbpfErrL2AddrAdd
 			}
 		}
+
+		fmt.Printf("[DP] L2 SMAC & DMAC %s add[OK]\n", hwAddr.String())
 
 		return 0
 	} else if w.Work == DpRemove {
@@ -89,7 +73,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 		}
 
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outsValue := new(smac.Act)
 		if err := bpf.GetMap(consts.DP_SMAC_MAP, skey, outsValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(skey, "", " ")

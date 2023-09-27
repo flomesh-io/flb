@@ -30,4 +30,6 @@ type MfXfrmInf struct {
 	NatXPort uint16    `json:"nat_xport"`
 	NatXIp   [4]uint32 `json:"nat_xip"`
 	NatRIp   [4]uint32 `json:"nat_rip"`
+	Osp      uint16    `json:"osp"`
+	Odp      uint16    `json:"odp"`
 }

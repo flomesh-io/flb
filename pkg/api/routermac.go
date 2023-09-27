@@ -10,19 +10,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/tmac"
 	"github.com/flomesh-io/flb/pkg/tk"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// RouterMacDpWorkQ - work queue entry for rt-mac operation
-type RouterMacDpWorkQ struct {
-	Work    DpWorkT
-	Status  *DpStatusT
-	L2Addr  [6]uint8
-	PortNum int
-	BD      int
-	TunID   uint32
-	TunType DpTunT
-	NhNum   int
-}
 
 // DpRouterMacMod - routine to work on a ebpf rt-mac change request
 func DpRouterMacMod(w *RouterMacDpWorkQ) int {
@@ -72,7 +61,7 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 		return 0
 	} else if w.Work == DpRemove {
 		bpf.DeleteMap(consts.DP_TMAC_MAP, key)
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(tmac.Act)
 		if err := bpf.GetMap(consts.DP_TMAC_MAP, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")

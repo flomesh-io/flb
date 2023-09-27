@@ -17,6 +17,11 @@ const (
 	DP_NH_MAP         = "nh_map"
 	DP_MIRROR_MAP     = "mirr_map"
 	DP_POL_MAP        = "polx_map"
+
+	DP_CRC32C_MAP   = "crc32c_map"
+	DP_CTCTR_MAP    = "ct_ctr"
+	DP_CPU_MAP      = "cpu_map"
+	DP_LIVE_CPU_MAP = "live_cpu_map"
 )
 
 const (

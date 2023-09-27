@@ -9,17 +9,8 @@ import (
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/mirr"
+	. "github.com/flomesh-io/flb/pkg/wq"
 )
-
-// MirrDpWorkQ - work queue entry for mirror operation
-type MirrDpWorkQ struct {
-	Work      DpWorkT
-	Name      string
-	Mark      int
-	MiPortNum int
-	MiBD      int
-	Status    *DpStatusT
-}
 
 // DpMirrMod - routine to work on a ebpf mirror modify request
 func DpMirrMod(w *MirrDpWorkQ) int {
@@ -52,7 +43,7 @@ func DpMirrMod(w *MirrDpWorkQ) int {
 		dat := new(mirr.Act)
 		bpf.UpdateMap(consts.DP_MIRROR_MAP, &key, dat)
 		return 0
-	} else if w.Work == DpMapShow {
+	} else {
 		outValue := new(mirr.Act)
 		if err := bpf.GetMap(consts.DP_MIRROR_MAP, key, outValue); err == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")
