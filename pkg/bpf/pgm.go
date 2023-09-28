@@ -19,7 +19,6 @@ func LoadXdpProg() int {
 
 func UnloadXdpProg() {
 	os.RemoveAll(`/sys/fs/bpf/flb_xdp_main`)
-	//os.RemoveAll(`/sys/fs/bpf/flb_kern_mon`)
 }
 
 // AttachXdpProg - attach eBPF program to an interface

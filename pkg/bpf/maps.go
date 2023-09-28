@@ -213,6 +213,5 @@ var (
 		`xctk`,
 		`xfck`,
 		`xfis`,
-		`map_events`,
 	}
 )
