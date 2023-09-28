@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"runtime/debug"
-	"runtime/pprof"
 	"sync"
 
 	opts "github.com/flomesh-io/flb/options"
@@ -28,9 +27,6 @@ type flbNetH struct {
 	logger *tk.Logger
 	ready  bool
 	self   int
-	rssEn  bool
-	eHooks bool
-	pFile  *os.File
 }
 
 var mh flbNetH
@@ -49,27 +45,8 @@ func Start(dph DpHookInterface) (*Zone, *sync.RWMutex) {
 	}()
 
 	mh.self = opts.Opts.ClusterSelf
-	mh.rssEn = opts.Opts.RssEnable
-	mh.eHooks = opts.Opts.EgrHooks
 	mh.sumDis = opts.Opts.CSumDisable
 	mh.pProbe = opts.Opts.PassiveEPProbe
-	//mh.sigCh = make(chan os.Signal, 5)
-	//signal.Notify(mh.sigCh, os.Interrupt, syscall.SIGCHLD, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
-
-	// Check if profiling is enabled
-	if opts.Opts.CPUProfile != "none" {
-		var err error
-		mh.pFile, err = os.Create(opts.Opts.CPUProfile)
-		if err != nil {
-			tk.LogIt(tk.LogNotice, "profile file create failed\n")
-			return nil, nil
-		}
-		err = pprof.StartCPUProfile(mh.pFile)
-		if err != nil {
-			tk.LogIt(tk.LogNotice, "CPU profiler start failed\n")
-			return nil, nil
-		}
-	}
 
 	mh.dp = DpBrokerInit(dph)
 
