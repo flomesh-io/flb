@@ -7,6 +7,7 @@ import (
 
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/cmn"
+	"github.com/flomesh-io/flb/pkg/config"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps/intf"
 	"github.com/flomesh-io/flb/pkg/maps/txintf"
@@ -21,7 +22,7 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 	var setIfi *intf.ActSetIfi
 
 	// This is a special case
-	if w.LoadEbpf == "flb0" || w.LoadEbpf == "llb0" {
+	if w.LoadEbpf == config.FLB_TAP_NAME {
 		w.PortNum = consts.FLB_INTERFACES - 1
 	}
 
@@ -32,7 +33,7 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 	txK = txintf.Key(w.PortNum)
 
 	if w.Work == DpCreate {
-		if w.LoadEbpf != "" && w.LoadEbpf != "lo" && w.LoadEbpf != "flb0" {
+		if w.LoadEbpf != "" && w.LoadEbpf != "lo" && w.LoadEbpf != config.FLB_TAP_NAME {
 			lRet := bpf.AttachTcProg(w.LoadEbpf)
 			if lRet != 0 {
 				tk.LogIt(tk.LogError, "ebpf load - %d error\n", w.PortNum)

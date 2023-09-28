@@ -8,17 +8,18 @@ import (
 
 	nl "github.com/vishvananda/netlink"
 
+	"github.com/flomesh-io/flb/pkg/config"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
 
 // LoadXdpProg - load xdp program
 func LoadXdpProg() int {
-	shell(`bpftool prog loadall /opt/flb/flb_xdp_main.o /sys/fs/bpf/flb_xdp_main type xdp`)
+	shell(fmt.Sprintf(`bpftool prog loadall %s/flb_xdp_main.o %s/flb_xdp_main type xdp`, config.FLB_BASE, config.BPF_FS_BASE))
 	return 0
 }
 
 func UnloadXdpProg() {
-	os.RemoveAll(`/sys/fs/bpf/flb_xdp_main`)
+	os.RemoveAll(fmt.Sprintf(`%s/flb_xdp_main`, config.BPF_FS_BASE))
 }
 
 // AttachXdpProg - attach eBPF program to an interface
@@ -37,7 +38,7 @@ func DetachXdpProg(intfName string) int {
 func AttachTcProg(intfName string) int {
 	if !hasLoadedTcProg(intfName) {
 		shell(fmt.Sprintf(`ftc qdisc add dev %s clsact`, intfName))
-		shell(fmt.Sprintf(`ftc filter add dev %s ingress bpf da obj /opt/flb/flb_ebpf_main.o sec tc_packet_hook0`, intfName))
+		shell(fmt.Sprintf(`ftc filter add dev %s ingress bpf da obj %s/flb_ebpf_main.o sec tc_packet_hook0`, intfName, config.FLB_BASE))
 	}
 	return 0
 }

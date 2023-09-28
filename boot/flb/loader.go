@@ -9,7 +9,7 @@ import (
 )
 
 func loadAttachEBpf() {
-	if ret := bpf.LinkTapDev(config.TapDevName); ret == 0 {
+	if ret := bpf.LinkTapDev(config.FLB_TAP_NAME); ret == 0 {
 		bpf.LoadXdpProg()
 
 		setupCrc32cMap()
@@ -17,14 +17,14 @@ func loadAttachEBpf() {
 		setupCpuMap()
 		setupLiveCpuMap()
 
-		bpf.AttachXdpProg(config.TapDevName)
-		bpf.AttachTcProg(config.TapDevName)
+		bpf.AttachXdpProg(config.FLB_TAP_NAME)
+		bpf.AttachTcProg(config.FLB_TAP_NAME)
 	}
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.TapDevName {
+			if intf.Name == config.FLB_TAP_NAME {
 				continue
 			}
 			bpf.AttachTcProg(intf.Name)
@@ -33,14 +33,14 @@ func loadAttachEBpf() {
 }
 
 func unloadEBpf() {
-	bpf.DetachTcProg(config.TapDevName)
-	bpf.DetachXdpProg(config.TapDevName)
-	bpf.UnlinkTapDev(config.TapDevName)
+	bpf.DetachTcProg(config.FLB_TAP_NAME)
+	bpf.DetachXdpProg(config.FLB_TAP_NAME)
+	bpf.UnlinkTapDev(config.FLB_TAP_NAME)
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.TapDevName {
+			if intf.Name == config.FLB_TAP_NAME {
 				continue
 			}
 			bpf.DetachTcProg(intf.Name)

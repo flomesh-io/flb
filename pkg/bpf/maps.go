@@ -15,15 +15,11 @@ import (
 	"github.com/cilium/ebpf"
 
 	"github.com/flomesh-io/flb/internal"
-)
-
-var (
-	BpfFs = "/sys/fs/bpf"
-	//BpfFs = "/opt/loxilb/dp/bpf"
+	"github.com/flomesh-io/flb/pkg/config"
 )
 
 func GetMap(mapName string, key, value interface{}) error {
-	pinFile := fmt.Sprintf("%s/%s", BpfFs, mapName)
+	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
 	if err != nil {
@@ -33,7 +29,7 @@ func GetMap(mapName string, key, value interface{}) error {
 }
 
 func DeleteMap(mapName string, key interface{}) error {
-	pinFile := fmt.Sprintf("%s/%s", BpfFs, mapName)
+	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
 	if err != nil {
@@ -43,7 +39,7 @@ func DeleteMap(mapName string, key interface{}) error {
 }
 
 func UpdateMap(mapName string, key, value interface{}) error {
-	pinFile := fmt.Sprintf("%s/%s", BpfFs, mapName)
+	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
 	if err != nil {
@@ -53,7 +49,7 @@ func UpdateMap(mapName string, key, value interface{}) error {
 }
 
 func ShowMap(mapName string, key, value interface{}) {
-	pinFile := fmt.Sprintf("%s/%s", BpfFs, mapName)
+	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
 	if err != nil {
@@ -77,7 +73,7 @@ func ShowMap(mapName string, key, value interface{}) {
 }
 
 func DescMap(mapName string) {
-	pinFile := fmt.Sprintf("%s/%s", BpfFs, mapName)
+	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	pinMap, loadErr := ebpf.LoadPinnedMap(pinFile, opts)
 	if loadErr != nil {
@@ -161,8 +157,8 @@ func UnmarshalBytes(data interface{}, buf []byte) error {
 
 func RemoveEBpfMaps() {
 	folders := []string{
-		`/sys/fs/bpf`,
-		`/sys/fs/bpf/tc/globals`,
+		config.BPF_FS_BASE,
+		fmt.Sprintf(`%s/tc/globals`, config.BPF_FS_BASE),
 	}
 
 	for _, folder := range folders {

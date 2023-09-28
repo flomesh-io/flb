@@ -8,9 +8,14 @@ const (
 	FLB_MAX_NXFRMS  = 16
 )
 
+const (
+	BPF_FS_BASE  = "/sys/fs/bpf"
+	FLB_BASE     = "/opt/flb"
+	FLB_TAP_NAME = `flb0`
+)
+
 var (
-	TapDevName = `flb0`
-	NodeNo     = uint32(0)
+	NodeNo = uint32(0)
 
 	FLB_MAX_LB_NODES           = 2
 	FLB_MIRR_MAP_ENTRIES       = 32
