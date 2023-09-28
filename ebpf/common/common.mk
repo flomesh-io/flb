@@ -17,12 +17,8 @@ BPFTOOL ?= bpftool
 
 XDP_C = ${XDP_TARGETS:=.c}
 TC_C = ${TC_TARGETS:=.c}
-TC_EC = ${TC_ETARGETS:=.c}
-MON_C = ${MON_TARGETS:=.c}
 XDP_OBJ = ${XDP_C:.c=.o}
 TC_OBJ = ${TC_C:.c=.o}
-TC_EOBJ = ${TC_EC:.c=.o}
-MON_OBJ = ${MON_C:.c=.o}
 
 UNAME := $(shell uname -m)
 ARCH := $(shell uname -m | sed 's/x86_64/x86/')
@@ -69,12 +65,12 @@ endif
 
 BPF_CFLAGS ?= -I../headers/ -I/usr/include/$(shell uname -m)-linux-gnu $(CFLAGS_ALL)
 
-all: llvm-check $(XDP_OBJ) $(TC_OBJ) $(TC_EOBJ) $(MON_OBJ)
+all: llvm-check $(XDP_OBJ) $(TC_OBJ)
 
 .PHONY: clean $(CLANG) $(LLC) vmlinux
 
 clean:
-	rm -f $(XDP_OBJ) $(USER_OBJ)
+	rm -f $(XDP_OBJ)
 	rm -f $@
 	rm -f *.ll
 	rm -f *~
@@ -125,39 +121,6 @@ $(TC_OBJ): %.o: %.c  Makefile $(COMMON_MK) $(KERN_USER_H) $(EXTRA_DEPS) $(XDP_DE
 		-O2 -g -c -o ${@:.o=.o} $<
 	#$(LLC) -march=bpf -mattr=dwarfris -filetype=obj -o $@ ${@:.o=.o}
 	sudo mv $@ /opt/flb/ 
-	@#sudo pahole -J /opt/flb/$@
-
-$(TC_EOBJ): %.o: %.c  Makefile $(COMMON_MK) $(KERN_USER_H) $(EXTRA_DEPS) $(XDP_DEPS)
-	$(CLANG) \
-		-target bpf \
-		-D __BPF_TRACING__ \
-		-DLL_TC_EBPF=1 \
-		-DLL_TC_EBPF_EHOOK=1 \
-		$(BPF_CFLAGS) \
-		-Wall \
-		-Wno-unused-value \
-		-Wno-pointer-sign \
-		-Wno-compare-distinct-pointer-types \
-		-Werror \
-		-O2 -g -c -o ${@:.o=.o} $<
-	#$(LLC) -march=bpf -mattr=dwarfris -filetype=obj -o $@ ${@:.o=.o}
-	sudo mv $@ /opt/flb/
-	@#sudo pahole -J /opt/flb/$@
-
-vmlinux:
-	$(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
-
-$(MON_OBJ): %.o: %.c  Makefile $(COMMON_MK) $(KERN_USER_H) $(EXTRA_DEPS) $(XDP_DEPS) vmlinux
-	$(CLANG) \
-		-target bpf \
-		-D __BPF_TRACING__ \
-		-D__TARGET_ARCH_$(ARCH) \
-		-DLL_TC_EBPF=1 \
-		$(BPF_CFLAGS) \
-		$(CLANG_BPF_SYS_INCLUDES) \
-		-O2 -g -c -o ${@:.o=.o} $<
-	#$(LLC) -march=bpf -mattr=dwarfris -filetype=obj -o $@ ${@:.o=.o}
-	@sudo cp $@ /opt/flb/
 	@#sudo pahole -J /opt/flb/$@
 
 install:

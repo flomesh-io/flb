@@ -12,8 +12,6 @@ XDP_DEPS := flb_kern_devif.c      \
 
 XDP_TARGETS  := flb_xdp_main
 TC_TARGETS   := flb_ebpf_main
-TC_ETARGETS  := flb_ebpf_emain
-MON_TARGETS  := flb_kern_mon
 
 LLC ?= llc
 CLANG ?= clang
