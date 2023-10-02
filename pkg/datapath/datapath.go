@@ -229,4 +229,28 @@ func DpInit() {
 		emap.has_pb = 0
 		emap.max_entries = 128
 	}
+
+	if emap, err := GetMap(consts.LL_DP_XFIS_MAP).loadMap(`xfis`); err == nil {
+		emap.has_pb = 0
+	}
+
+	if emap, err := GetMap(consts.LL_DP_PKTS_MAP).loadMap(`pkts`); err == nil {
+		emap.has_pb = 0
+	}
+
+	if emap, err := GetMap(consts.LL_DP_FCAS_MAP).loadMap(`fcas`); err == nil {
+		emap.has_pb = 0
+	}
+
+	if emap, err := GetMap(consts.LL_DP_XFCK_MAP).loadMap(`xfck`); err == nil {
+		emap.has_pb = 0
+	}
+
+	if emap, err := GetMap(consts.LL_DP_XCTK_MAP).loadMap(`xctk`); err == nil {
+		emap.has_pb = 0
+	}
+
+	if emap, err := GetMap(consts.LL_DP_GPARSER_MAP).loadMap(`gparser`); err == nil {
+		emap.has_pb = 0
+	}
 }
