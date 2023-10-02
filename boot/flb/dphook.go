@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/flomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/pkg/datapath"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
@@ -29,51 +29,51 @@ func (e DpEbpfH) DpPolDel(w *PolDpWorkQ) int {
 }
 
 func (e DpEbpfH) DpPortPropAdd(w *PortDpWorkQ) int {
-	return api.DpPortPropMod(w)
+	return datapath.DpPortPropMod(w)
 }
 
 func (e DpEbpfH) DpPortPropDel(w *PortDpWorkQ) int {
-	return api.DpPortPropMod(w)
+	return datapath.DpPortPropMod(w)
 }
 
 func (e DpEbpfH) DpL2AddrAdd(w *L2AddrDpWorkQ) int {
-	return api.DpL2AddrMod(w)
+	return datapath.DpL2AddrMod(w)
 }
 
 func (e DpEbpfH) DpL2AddrDel(w *L2AddrDpWorkQ) int {
-	return api.DpL2AddrMod(w)
+	return datapath.DpL2AddrMod(w)
 }
 
 func (e DpEbpfH) DpRouterMacAdd(w *RouterMacDpWorkQ) int {
-	return api.DpRouterMacMod(w)
+	return datapath.DpRouterMacMod(w)
 }
 
 func (e DpEbpfH) DpRouterMacDel(w *RouterMacDpWorkQ) int {
-	return api.DpRouterMacMod(w)
+	return datapath.DpRouterMacMod(w)
 }
 
 func (e DpEbpfH) DpNextHopAdd(w *NextHopDpWorkQ) int {
-	return api.DpNextHopMod(w)
+	return datapath.DpNextHopMod(w)
 }
 
 func (e DpEbpfH) DpNextHopDel(w *NextHopDpWorkQ) int {
-	return api.DpNextHopMod(w)
+	return datapath.DpNextHopMod(w)
 }
 
 func (e DpEbpfH) DpRouteAdd(w *RouteDpWorkQ) int {
-	return api.DpRouteMod(w)
+	return datapath.DpRouteMod(w)
 }
 
 func (e DpEbpfH) DpRouteDel(w *RouteDpWorkQ) int {
-	return api.DpRouteMod(w)
+	return datapath.DpRouteMod(w)
 }
 
 func (e DpEbpfH) DpNatLbRuleAdd(w *NatDpWorkQ) int {
-	return api.DpNatLbRuleMod(w)
+	return datapath.DpNatLbRuleMod(w)
 }
 
 func (e DpEbpfH) DpNatLbRuleDel(w *NatDpWorkQ) int {
-	return api.DpNatLbRuleMod(w)
+	return datapath.DpNatLbRuleMod(w)
 }
 
 func (e DpEbpfH) DpFwRuleAdd(w *FwDpWorkQ) int {

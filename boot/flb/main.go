@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/flomesh-io/flb/pkg/api"
+	"github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
@@ -49,7 +49,7 @@ func main() {
 	dpH := new(DpEbpfH)
 	nDp := lbnet.DpBrokerInit(dpH)
 
-	api.DpInit()
+	datapath.DpInit()
 
 	go restfullCliServer(nDp.ToDpCh)
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)

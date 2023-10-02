@@ -1,4 +1,4 @@
-package api
+package datapath
 
 import (
 	"github.com/flomesh-io/flb/internal"
