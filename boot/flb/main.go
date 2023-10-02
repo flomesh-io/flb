@@ -7,7 +7,6 @@ import (
 	"syscall"
 	"time"
 
-	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
@@ -37,6 +36,7 @@ const (
 
 func main() {
 	wg.Add(1)
+
 	if success := setResourceLimit(); !success {
 		tk.LogIt(tk.LogCritical, `Failed to increase RLIMIT_MEMLOCK limit!`)
 		os.Exit(-1)
@@ -48,8 +48,6 @@ func main() {
 
 	dpH := new(DpEbpfH)
 	nDp := lbnet.DpBrokerInit(dpH)
-
-	dp.DpInit()
 
 	go restfullCliServer(nDp.ToDpCh)
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)

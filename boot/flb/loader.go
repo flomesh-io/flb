@@ -15,10 +15,7 @@ func loadAttachEBpf() {
 	if ret := bpf.LinkTapDev(config.FLB_TAP_NAME); ret == 0 {
 		bpf.LoadXdpProg()
 
-		setupCrc32cMap()
-		setupCtCtrMap(config.NodeNo)
-		setupCpuMap()
-		setupLiveCpuMap()
+		dp.DpInit()
 
 		bpf.AttachXdpProg(config.FLB_TAP_NAME)
 		bpf.AttachTcProg(config.FLB_TAP_NAME)
