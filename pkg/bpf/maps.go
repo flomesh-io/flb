@@ -18,10 +18,14 @@ import (
 	"github.com/flomesh-io/flb/pkg/config"
 )
 
-func GetMap(mapName string, key, value interface{}) error {
+func LoadMap(mapName string) (*ebpf.Map, error) {
 	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
 	opts := new(ebpf.LoadPinOptions)
-	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
+	return ebpf.LoadPinnedMap(pinFile, opts)
+}
+
+func GetMap(mapName string, key, value interface{}) error {
+	pinMap, err := LoadMap(mapName)
 	if err != nil {
 		return err
 	}
@@ -29,9 +33,7 @@ func GetMap(mapName string, key, value interface{}) error {
 }
 
 func DeleteMap(mapName string, key interface{}) error {
-	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
-	opts := new(ebpf.LoadPinOptions)
-	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
+	pinMap, err := LoadMap(mapName)
 	if err != nil {
 		return err
 	}
@@ -39,9 +41,7 @@ func DeleteMap(mapName string, key interface{}) error {
 }
 
 func UpdateMap(mapName string, key, value interface{}) error {
-	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
-	opts := new(ebpf.LoadPinOptions)
-	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
+	pinMap, err := LoadMap(mapName)
 	if err != nil {
 		return err
 	}
@@ -49,9 +49,7 @@ func UpdateMap(mapName string, key, value interface{}) error {
 }
 
 func ShowMap(mapName string, key, value interface{}) {
-	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
-	opts := new(ebpf.LoadPinOptions)
-	pinMap, err := ebpf.LoadPinnedMap(pinFile, opts)
+	pinMap, err := LoadMap(mapName)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -73,9 +71,7 @@ func ShowMap(mapName string, key, value interface{}) {
 }
 
 func DescMap(mapName string) {
-	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
-	opts := new(ebpf.LoadPinOptions)
-	pinMap, loadErr := ebpf.LoadPinnedMap(pinFile, opts)
+	pinMap, loadErr := LoadMap(mapName)
 	if loadErr != nil {
 		fmt.Println(loadErr)
 		return

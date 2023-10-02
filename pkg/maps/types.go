@@ -48,3 +48,18 @@ type RtTunNhAct struct {
 	L3t  RtL3TunAct `json:"l3t"`
 	L2Nh RtL2NhAct  `json:"l2nh"`
 }
+
+type PbStats struct {
+	Bytes   uint64
+	Packets uint64
+}
+
+type PolStats struct {
+	DropPackets uint64
+	PassPackets uint64
+}
+
+type PbcStats struct {
+	St   PbStats
+	Used bool
+}
