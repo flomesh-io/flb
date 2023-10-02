@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"os"
 	"runtime"
 	"sync"
 	"unsafe"
@@ -150,60 +149,3 @@ func UnmarshalBytes(data interface{}, buf []byte) error {
 		return nil
 	}
 }
-
-func RemoveEBpfMaps() {
-	folders := []string{
-		config.BPF_FS_BASE,
-		fmt.Sprintf(`%s/tc/globals`, config.BPF_FS_BASE),
-	}
-
-	for _, folder := range folders {
-		for _, ebpfMap := range ebpfMaps {
-			os.Remove(fmt.Sprintf(`%s/%s`, folder, ebpfMap))
-		}
-	}
-}
-
-var (
-	ebpfMaps = []string{
-		`bd_stats_map`,
-		`cpu_map`,
-		`crc32c_map`,
-		`ct_ctr`,
-		`ct_map`,
-		`ct_stats_map`,
-		`dmac_map`,
-		`fc_v4_map`,
-		`fc_v4_stats_map`,
-		`fcas`,
-		`fw_v4_map`,
-		`fw_v4_stats_map`,
-		`gparser`,
-		`intf_map`,
-		`intf_stats_map`,
-		`live_cpu_map`,
-		`mirr_map`,
-		`nat_map`,
-		`nat_stats_map`,
-		`nh_map`,
-		`pgm_tbl`,
-		`pkt_ring`,
-		`pkts`,
-		`polx_map`,
-		`rt_v4_map`,
-		`rt_v4_stats_map`,
-		`rt_v6_map`,
-		`rt_v6_stats_map`,
-		`sess_v4_map`,
-		`sess_v4_stats_map`,
-		`smac_map`,
-		`tmac_map`,
-		`tmac_stats_map`,
-		`tx_bd_stats_map`,
-		`tx_intf_map`,
-		`tx_intf_stats_map`,
-		`xctk`,
-		`xfck`,
-		`xfis`,
-	}
-)

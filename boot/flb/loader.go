@@ -2,10 +2,13 @@ package main
 
 import "C"
 import (
+	"fmt"
 	"net"
+	"os"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/config"
+	dp "github.com/flomesh-io/flb/pkg/datapath"
 )
 
 func loadAttachEBpf() {
@@ -46,6 +49,19 @@ func unloadEBpf() {
 			bpf.DetachTcProg(intf.Name)
 		}
 	}
-	bpf.RemoveEBpfMaps()
+	removeEBpfMaps()
 	bpf.UnloadXdpProg()
+}
+
+func removeEBpfMaps() {
+	folders := []string{
+		config.BPF_FS_BASE,
+		fmt.Sprintf(`%s/tc/globals`, config.BPF_FS_BASE),
+	}
+
+	for _, folder := range folders {
+		dp.EachMap(func(emap *dp.DpMap) {
+			os.Remove(fmt.Sprintf(`%s/%s`, folder, emap.Name()))
+		})
+	}
 }
