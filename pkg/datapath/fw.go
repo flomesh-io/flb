@@ -2,9 +2,14 @@ package datapath
 
 /*
 #include <stdint.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/types.h>
-
+#include <linux/types.h>
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
