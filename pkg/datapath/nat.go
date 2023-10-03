@@ -1,6 +1,5 @@
 package datapath
 
-import "C"
 import (
 	"encoding/json"
 	"fmt"

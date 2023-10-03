@@ -1,7 +1,6 @@
-package main
+package bpf
 
 /*
-
 #include <sys/resource.h>
 
 static int flb_set_rlims(void)
@@ -21,7 +20,7 @@ static int flb_set_rlims(void)
 */
 import "C"
 
-func setResourceLimit() bool {
+func SetResourceLimit() bool {
 	ret := C.flb_set_rlims()
 	return ret == 0
 }

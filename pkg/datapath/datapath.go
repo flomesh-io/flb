@@ -291,7 +291,11 @@ func DpInit() {
 	setupLiveCpuMap()
 }
 
-func Add_map_elem(tbl int, k, v interface{}) error {
+func del_map_elem(tbl int, k interface{}) error {
+	return nil
+}
+
+func add_map_elem(tbl int, k, v interface{}) error {
 	if tbl < 0 || tbl >= consts.LL_DP_MAX_MAP {
 		return fmt.Errorf(`invalid ebpf map index: %d`, tbl)
 	}
