@@ -1,12 +1,11 @@
 package datapath
 
+import "C"
 import (
-	"encoding/json"
 	"fmt"
 	"syscall"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/rt"
@@ -18,23 +17,23 @@ import (
 
 // DpRouteMod - routine to work on a ebpf route change request
 func DpRouteMod(w *RouteDpWorkQ) int {
-	var mapName string
-	var statsMapName string
+	var mapNum int
+	var mapSNum int
 	var act *maps.RtNhAct
 	var kPtr *[6]uint8
 	var key interface{}
 
 	if w.ZoneNum == 0 {
-		fmt.Print("ZoneNum must be specified\n")
+		tk.LogIt(tk.LogError, "ZoneNum must be specified\n")
 		syscall.Exit(1)
 	}
 
 	if tk.IsNetIPv4(w.Dst.IP.String()) {
 		key4 := new(rtv4.Key)
 
-		len, _ := w.Dst.Mask.Size()
-		len += 16 /* 16-bit ZoneNum + prefix-len */
-		key4.L.PrefixLen = uint32(len)
+		length, _ := w.Dst.Mask.Size()
+		length += 16 /* 16-bit ZoneNum + prefix-len */
+		key4.L.PrefixLen = uint32(length)
 		kPtr = (*[6]uint8)(unsafe.Pointer(&key4.Anon0[0]))
 
 		kPtr[0] = uint8(w.ZoneNum >> 8 & 0xff)
@@ -44,20 +43,20 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 		kPtr[4] = uint8(w.Dst.IP[14])
 		kPtr[5] = uint8(w.Dst.IP[15])
 		key = key4
-		mapName = consts.DP_RTV4_MAP
-		statsMapName = consts.DP_RTV4_STATS_MAP
+		mapNum = consts.LL_DP_RTV4_MAP
+		mapSNum = consts.LL_DP_RTV4_STATS_MAP
 	} else {
 		key6 := new(rtv6.Key)
 
-		len, _ := w.Dst.Mask.Size()
-		key6.L.PrefixLen = uint32(len)
+		length, _ := w.Dst.Mask.Size()
+		key6.L.PrefixLen = uint32(length)
 
 		for bp := 0; bp < 16; bp++ {
 			key6.Anon0[bp] = w.Dst.IP[bp]
 		}
 		key = key6
-		mapName = consts.DP_RTV6_MAP
-		statsMapName = consts.DP_RTV6_STATS_MAP
+		mapNum = consts.LL_DP_RTV6_MAP
+		mapSNum = consts.LL_DP_RTV6_STATS_MAP
 	}
 
 	if w.Work == DpCreate {
@@ -75,32 +74,18 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 			dat.Ca.CIdx = uint32(w.RtMark)
 		}
 
-		err := bpf.UpdateMap(mapName, key, dat)
+		err := add_map_elem(mapNum, key, dat)
 		if err != nil {
 			fmt.Printf("[DP] RT %s add[NOK] %v\n", w.Dst, err)
 			return consts.EbpfErrRt4Add
 		}
 		return 0
 	} else if w.Work == DpRemove {
-		bpf.DeleteMap(mapName, key)
-
+		del_map_elem(mapNum, key)
 		if w.RtMark > 0 {
-			// TODO pending
-			fmt.Println(statsMapName)
-			//C.llb_clear_map_stats(statsMapName, C.uint(w.RtMark))
-		}
-		return 0
-	} else {
-		outValue := new(rt.Act)
-		if err := bpf.GetMap(mapName, key, outValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(key, "", " ")
-			valueBytes, _ := json.MarshalIndent(outValue, "", " ")
-			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
+			llb_clear_map_stats(mapSNum, uint32(w.RtMark))
 		}
 		return 0
 	}
-
 	return consts.EbpfErrWqUnk
 }

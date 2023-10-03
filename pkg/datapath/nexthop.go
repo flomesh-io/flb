@@ -1,12 +1,10 @@
 package datapath
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/nh"
@@ -58,7 +56,7 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 
 		srcHwAddr := net.HardwareAddr(w.SrcAddr[:])
 		dstHwAddr := net.HardwareAddr(w.DstAddr[:])
-		err := bpf.UpdateMap(consts.DP_NH_MAP, key, dat)
+		err := add_map_elem(consts.LL_DP_NH_MAP, key, dat)
 		if err != nil {
 			fmt.Printf("[DP] Nexthop %5d %s %s add[NOK] %x\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String(), err)
 			return consts.EbpfErrNhAdd
@@ -68,20 +66,8 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		dat := new(nh.Act)
 		// eBPF array elements cant be deleted. Instead we just reset it
-		bpf.UpdateMap(consts.DP_NH_MAP, key, dat)
-		return 0
-	} else {
-		outValue := new(nh.Act)
-		if err := bpf.GetMap(consts.DP_NH_MAP, key, outValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(key, "", " ")
-			valueBytes, _ := json.MarshalIndent(outValue, "", " ")
-			fmt.Println(consts.DP_NH_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
+		add_map_elem(consts.LL_DP_NH_MAP, key, dat)
 		return 0
 	}
-
 	return consts.EbpfErrWqUnk
 }

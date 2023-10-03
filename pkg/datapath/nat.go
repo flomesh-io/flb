@@ -1,10 +1,9 @@
 package datapath
 
 import (
-	"encoding/json"
 	"fmt"
+	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/config"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps/nat"
@@ -14,8 +13,6 @@ import (
 
 // DpNatLbRuleMod - routine to work on a ebpf nat-lb change request
 func DpNatLbRuleMod(w *NatDpWorkQ) int {
-	//bytes, _ := json.MarshalIndent(w, "", " ")
-	//fmt.Println(string(bytes))
 	key := new(nat.Key)
 
 	key.DAddr = [4]uint32{0, 0, 0, 0}
@@ -23,8 +20,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		key.DAddr[0] = tk.IPtonl(w.ServiceIP)
 		key.V6 = 0
 	} else {
-		// todo benne pending
-		//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&key.DAddr[0]), w.ServiceIP)
+		tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&key.DAddr[0]), w.ServiceIP)
 		key.V6 = 1
 	}
 	key.Mark = w.BlockNum
@@ -46,9 +42,6 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		// seconds to nanoseconds
 		acts.Ito = w.InActTo * 1000000000
 
-		/*acts.npmhh = 2
-		acts.pmhh[0] = 0x64646464
-		acts.pmhh[1] = 0x65656565*/
 		for i, k := range w.SecIP {
 			acts.Pmhh[i] = tk.IPtonl(k)
 		}
@@ -59,9 +52,6 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			acts.SelType = consts.NAT_LB_SEL_RR
 		case w.EpSel == EpHash:
 			acts.SelType = consts.NAT_LB_SEL_HASH
-		/* Currently not implemented in DP */
-		/*case w.EpSel == EpPrio:
-		acts.SelType = consts.NAT_LB_SEL_PRIO*/
 		default:
 			acts.SelType = consts.NAT_LB_SEL_RR
 		}
@@ -75,12 +65,9 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			nxfa.WPrio = k.Weight
 			nxfa.NatXPort = tk.Htons(k.XPort)
 			if tk.IsNetIPv6(k.XIP.String()) {
-				// todo benne pending
-				//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatXIp[0]), k.XIP)
-
+				tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatXIp[0]), k.XIP)
 				if tk.IsNetIPv6(k.RIP.String()) {
-					// todo benne pending
-					//tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatRIp[0]), k.RIP)
+					tk.ConvNetIP2DPv6Addr(unsafe.Pointer(&nxfa.NatRIp[0]), k.RIP)
 				}
 				nxfa.Nv6 = 1
 			} else {
@@ -107,7 +94,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			acts.Cdis = 0
 		}
 
-		err := bpf.UpdateMap(consts.DP_NAT_MAP, key, acts)
+		err := add_map_elem(consts.LL_DP_NAT_MAP, key, acts)
 		if err != nil {
 			fmt.Printf("[DP] LB rule %s add[NOK] %v\n", w.ServiceIP.String(), err)
 			return consts.EbpfErrTmacAdd
@@ -115,20 +102,8 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		fmt.Printf("[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
 		return 0
 	} else if w.Work == DpRemove {
-		bpf.DeleteMap(consts.DP_NAT_MAP, key)
-		return 0
-	} else {
-		outValue := new(nat.Acts)
-		if err := bpf.GetMap(consts.DP_NAT_MAP, key, outValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(key, "", " ")
-			valueBytes, _ := json.MarshalIndent(outValue, "", " ")
-			fmt.Println(consts.DP_NAT_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
+		del_map_elem(consts.LL_DP_NAT_MAP, key)
 		return 0
 	}
-
 	return consts.EbpfErrWqUnk
 }

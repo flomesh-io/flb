@@ -1,11 +1,8 @@
 package datapath
 
 import (
-	"encoding/json"
-	"fmt"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/tmac"
@@ -53,26 +50,13 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 			dat.Ca.ActType = consts.DP_SET_L3_EN
 		}
 
-		err := bpf.UpdateMap(consts.DP_TMAC_MAP, key, dat)
+		err := add_map_elem(consts.LL_DP_TMAC_MAP, key, dat)
 		if err != nil {
 			return consts.EbpfErrTmacAdd
 		}
-
 		return 0
 	} else if w.Work == DpRemove {
-		bpf.DeleteMap(consts.DP_TMAC_MAP, key)
-	} else {
-		outValue := new(tmac.Act)
-		if err := bpf.GetMap(consts.DP_TMAC_MAP, key, outValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(key, "", " ")
-			valueBytes, _ := json.MarshalIndent(outValue, "", " ")
-			fmt.Println(consts.DP_TMAC_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
-		return 0
+		del_map_elem(consts.LL_DP_TMAC_MAP, key)
 	}
-
 	return consts.EbpfErrWqUnk
 }

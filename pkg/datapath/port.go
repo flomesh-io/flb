@@ -1,7 +1,6 @@
 package datapath
 
 import (
-	"encoding/json"
 	"fmt"
 	"unsafe"
 
@@ -55,34 +54,31 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 			setIfi.Pprop = consts.FLB_DP_PORT_UPP
 		}
 
-		err := bpf.UpdateMap(consts.DP_INTF_MAP, key, data)
+		err := add_map_elem(consts.LL_DP_INTF_MAP, key, data)
 		if err != nil {
 			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error\n", w.OsPortNum, w.IngVlan)
 			fmt.Printf("[DP] Link %d vlan %d -> %d add[NOK] %v\n", w.OsPortNum, w.IngVlan, w.PortNum, err)
 			return consts.EbpfErrPortPropAdd
 		}
-
 		tk.LogIt(tk.LogDebug, "ebpf intfmap added - %d vlan %d -> %d\n", w.OsPortNum, w.IngVlan, w.PortNum)
 		fmt.Printf("[DP] Link %d vlan %d -> %d add[OK]\n", w.OsPortNum, w.IngVlan, w.PortNum)
 
 		txV = txintf.Act(w.OsPortNum)
-		err = bpf.UpdateMap(consts.DP_TX_INTF_MAP, &txK, &txV)
+		err = add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
 		if err != nil {
-			bpf.DeleteMap(consts.DP_INTF_MAP, key)
+			del_map_elem(consts.LL_DP_INTF_MAP, key)
 			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error\n", w.OsPortNum)
 			return consts.EbpfErrPortPropAdd
 		}
 		tk.LogIt(tk.LogDebug, "ebpf txintfmap added - %d -> %d\n", w.PortNum, w.OsPortNum)
 		return 0
 	} else if w.Work == DpRemove {
-
 		// TX_INTF_MAP is array type so we can't delete it
 		// Rather we need to zero it out first
 		txV = txintf.Act(0)
-		bpf.UpdateMap(consts.DP_TX_INTF_MAP, &txK, &txV)
-		bpf.DeleteMap(consts.DP_TX_INTF_MAP, &txK)
-		bpf.DeleteMap(consts.DP_INTF_MAP, key)
-
+		add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
+		del_map_elem(consts.LL_DP_TX_INTF_MAP, &txK)
+		del_map_elem(consts.LL_DP_INTF_MAP, key)
 		if w.LoadEbpf != "" {
 			lRet := bpf.DetachTcProg(w.LoadEbpf)
 			if lRet != 0 {
@@ -91,18 +87,6 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 			}
 			tk.LogIt(tk.LogDebug, "ebpf unloaded - ifi %d\n", w.OsPortNum)
 		}
-
-		return 0
-	} else {
-		outValue := new(intf.Act)
-		if err := bpf.GetMap(consts.DP_INTF_MAP, key, outValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(key, "", " ")
-			valueBytes, _ := json.MarshalIndent(outValue, "", " ")
-			fmt.Println(consts.DP_INTF_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
 		return 0
 	}
 

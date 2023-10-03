@@ -1,7 +1,6 @@
 package datapath
 
 import (
-	"encoding/json"
 	"fmt"
 	"net"
 	"unsafe"
@@ -47,7 +46,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 		}
 
 		hwAddr := net.HardwareAddr(w.L2Addr[:])
-		sErr := bpf.UpdateMap(consts.DP_SMAC_MAP, skey, sval)
+		sErr := add_map_elem(consts.LL_DP_SMAC_MAP, skey, sval)
 		if sErr != nil {
 			fmt.Printf("[DP] L2 SMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
 			return consts.EbpfErrL2AddrAdd
@@ -57,42 +56,19 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 			dErr := bpf.UpdateMap(consts.DP_DMAC_MAP, dkey, dval)
 			if dErr != nil {
 				fmt.Printf("[DP] L2 DMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
-				bpf.DeleteMap(consts.DP_SMAC_MAP, skey)
+				del_map_elem(consts.LL_DP_SMAC_MAP, skey)
 				return consts.EbpfErrL2AddrAdd
 			}
 		}
-
 		fmt.Printf("[DP] L2 SMAC & DMAC %s add[OK]\n", hwAddr.String())
 
 		return 0
 	} else if w.Work == DpRemove {
-		bpf.DeleteMap(consts.DP_SMAC_MAP, skey)
+		del_map_elem(consts.LL_DP_SMAC_MAP, skey)
 		if w.Tun == 0 {
-			bpf.DeleteMap(consts.DP_DMAC_MAP, dkey)
+			del_map_elem(consts.LL_DP_DMAC_MAP, dkey)
 		}
-
-		return 0
-	} else {
-		outsValue := new(smac.Act)
-		if err := bpf.GetMap(consts.DP_SMAC_MAP, skey, outsValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(skey, "", " ")
-			valueBytes, _ := json.MarshalIndent(outsValue, "", " ")
-			fmt.Println(consts.DP_SMAC_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
-		outdValue := new(dmac.Act)
-		if err := bpf.GetMap(consts.DP_DMAC_MAP, dkey, outdValue); err == nil {
-			keyBytes, _ := json.MarshalIndent(dkey, "", " ")
-			valueBytes, _ := json.MarshalIndent(outdValue, "", " ")
-			fmt.Println(consts.DP_DMAC_MAP, "key:", string(keyBytes), "=", "value:", string(valueBytes))
-		} else {
-			fmt.Println(err.Error())
-		}
-
 		return 0
 	}
-
 	return consts.EbpfErrWqUnk
 }
