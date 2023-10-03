@@ -4,7 +4,8 @@ package datapath
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <linux/types.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
