@@ -10,7 +10,8 @@ package datapath
 #include <unistd.h>
 #include <sys/types.h>
 #include <linux/types.h>
-#include "../../ebpf/common/common_pdi.h"
+#include "../../ebpf/common/pdi.h"
+#include "../../ebpf/common/flb_dpapi.h"
 */
 import "C"
 
