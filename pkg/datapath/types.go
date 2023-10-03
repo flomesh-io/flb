@@ -10,11 +10,9 @@ package datapath
 #include <unistd.h>
 #include <sys/types.h>
 #include <linux/types.h>
-#include "../../ebpf/common/pdi.h"
-#include "../../ebpf/common/flb_dpapi.h"
+#include <bpf.h>
+#include <pdi.h>
+#include <flb_dpapi.h>
+#cgo CFLAGS:  -I./../../ebpf/headers/linux -I./../../ebpf/common
 */
 import "C"
-
-var (
-	a C.struct_pdi_key
-)
