@@ -74,14 +74,14 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 			dat.Ca.CIdx = uint32(w.RtMark)
 		}
 
-		err := add_map_elem(mapNum, key, dat)
+		err := llb_add_map_elem(mapNum, key, dat)
 		if err != nil {
 			fmt.Printf("[DP] RT %s add[NOK] %v\n", w.Dst, err)
 			return consts.EbpfErrRt4Add
 		}
 		return 0
 	} else if w.Work == DpRemove {
-		del_map_elem(mapNum, key)
+		llb_del_map_elem(mapNum, key)
 		if w.RtMark > 0 {
 			llb_clear_map_stats(mapSNum, uint32(w.RtMark))
 		}

@@ -54,7 +54,7 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 			setIfi.Pprop = consts.FLB_DP_PORT_UPP
 		}
 
-		err := add_map_elem(consts.LL_DP_INTF_MAP, key, data)
+		err := llb_add_map_elem(consts.LL_DP_INTF_MAP, key, data)
 		if err != nil {
 			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error\n", w.OsPortNum, w.IngVlan)
 			fmt.Printf("[DP] Link %d vlan %d -> %d add[NOK] %v\n", w.OsPortNum, w.IngVlan, w.PortNum, err)
@@ -64,9 +64,9 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 		fmt.Printf("[DP] Link %d vlan %d -> %d add[OK]\n", w.OsPortNum, w.IngVlan, w.PortNum)
 
 		txV = txintf.Act(w.OsPortNum)
-		err = add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
+		err = llb_add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
 		if err != nil {
-			del_map_elem(consts.LL_DP_INTF_MAP, key)
+			llb_del_map_elem(consts.LL_DP_INTF_MAP, key)
 			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error\n", w.OsPortNum)
 			return consts.EbpfErrPortPropAdd
 		}
@@ -76,9 +76,9 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 		// TX_INTF_MAP is array type so we can't delete it
 		// Rather we need to zero it out first
 		txV = txintf.Act(0)
-		add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
-		del_map_elem(consts.LL_DP_TX_INTF_MAP, &txK)
-		del_map_elem(consts.LL_DP_INTF_MAP, key)
+		llb_add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
+		llb_del_map_elem(consts.LL_DP_TX_INTF_MAP, &txK)
+		llb_del_map_elem(consts.LL_DP_INTF_MAP, key)
 		if w.LoadEbpf != "" {
 			lRet := bpf.DetachTcProg(w.LoadEbpf)
 			if lRet != 0 {

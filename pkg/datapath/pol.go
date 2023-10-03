@@ -41,7 +41,7 @@ func DpPolMod(w *PolDpWorkQ) int {
 		pa.Laste_uts = pa.Toksc_pus
 		pa.Drop_prio = consts.FLB_PIPE_COL_YELLOW
 
-		err := add_map_elem(consts.LL_DP_POL_MAP, &key, dat)
+		err := llb_add_map_elem(consts.LL_DP_POL_MAP, &key, dat)
 		if err != nil {
 			*w.Status = 1
 			return consts.EbpfErrPolAdd
@@ -50,8 +50,8 @@ func DpPolMod(w *PolDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		// Array map types need to be zeroed out first
 		dat := new(polx.Act)
-		add_map_elem(consts.LL_DP_POL_MAP, &key, dat)
-		del_map_elem(consts.LL_DP_POL_MAP, &key)
+		llb_add_map_elem(consts.LL_DP_POL_MAP, &key, dat)
+		llb_del_map_elem(consts.LL_DP_POL_MAP, &key)
 		return 0
 	}
 	return 0

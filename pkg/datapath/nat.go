@@ -94,7 +94,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 			acts.Cdis = 0
 		}
 
-		err := add_map_elem(consts.LL_DP_NAT_MAP, key, acts)
+		err := llb_add_map_elem(consts.LL_DP_NAT_MAP, key, acts)
 		if err != nil {
 			fmt.Printf("[DP] LB rule %s add[NOK] %v\n", w.ServiceIP.String(), err)
 			return consts.EbpfErrTmacAdd
@@ -102,7 +102,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		fmt.Printf("[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
 		return 0
 	} else if w.Work == DpRemove {
-		del_map_elem(consts.LL_DP_NAT_MAP, key)
+		llb_del_map_elem(consts.LL_DP_NAT_MAP, key)
 		return 0
 	}
 	return consts.EbpfErrWqUnk

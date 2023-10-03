@@ -56,7 +56,7 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 
 		srcHwAddr := net.HardwareAddr(w.SrcAddr[:])
 		dstHwAddr := net.HardwareAddr(w.DstAddr[:])
-		err := add_map_elem(consts.LL_DP_NH_MAP, key, dat)
+		err := llb_add_map_elem(consts.LL_DP_NH_MAP, key, dat)
 		if err != nil {
 			fmt.Printf("[DP] Nexthop %5d %s %s add[NOK] %x\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String(), err)
 			return consts.EbpfErrNhAdd
@@ -66,7 +66,7 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		dat := new(nh.Act)
 		// eBPF array elements cant be deleted. Instead we just reset it
-		add_map_elem(consts.LL_DP_NH_MAP, key, dat)
+		llb_add_map_elem(consts.LL_DP_NH_MAP, key, dat)
 		return 0
 	}
 	return consts.EbpfErrWqUnk

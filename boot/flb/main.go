@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
-	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
@@ -37,10 +36,6 @@ const (
 //}
 
 func main() {
-	dp.Test()
-}
-
-func main2() {
 	wg.Add(1)
 
 	if success := bpf.SetResourceLimit(); !success {

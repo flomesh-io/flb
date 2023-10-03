@@ -50,13 +50,13 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 			dat.Ca.ActType = consts.DP_SET_L3_EN
 		}
 
-		err := add_map_elem(consts.LL_DP_TMAC_MAP, key, dat)
+		err := llb_add_map_elem(consts.LL_DP_TMAC_MAP, key, dat)
 		if err != nil {
 			return consts.EbpfErrTmacAdd
 		}
 		return 0
 	} else if w.Work == DpRemove {
-		del_map_elem(consts.LL_DP_TMAC_MAP, key)
+		llb_del_map_elem(consts.LL_DP_TMAC_MAP, key)
 	}
 	return consts.EbpfErrWqUnk
 }

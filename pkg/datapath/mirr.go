@@ -22,7 +22,7 @@ func DpMirrMod(w *MirrDpWorkQ) int {
 		la := (*maps.L2VlanAct)(unsafe.Pointer(&dat.Anon0[0]))
 		la.OPort = uint16(w.MiPortNum)
 		la.Vlan = uint16(w.MiBD)
-		err := add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
+		err := llb_add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
 		if err != nil {
 			*w.Status = 1
 			return consts.EbpfErrMirrAdd
@@ -31,8 +31,8 @@ func DpMirrMod(w *MirrDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		// Array map types need to be zeroed out first
 		dat := new(mirr.Act)
-		add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
-		del_map_elem(consts.LL_DP_MIRROR_MAP, &key)
+		llb_add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
+		llb_del_map_elem(consts.LL_DP_MIRROR_MAP, &key)
 		return 0
 	}
 	return 0
