@@ -8,8 +8,7 @@ package datapath
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <linux/types.h>
+
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
