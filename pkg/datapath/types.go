@@ -194,7 +194,7 @@ func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
 }
 
 func memcpy(dest, src unsafe.Pointer, n uint64) unsafe.Pointer {
-	return C.memcpy(dest, C.int(src), C.ulong(n))
+	return C.memcpy(dest, src, C.ulong(n))
 }
 
 func memset(dest unsafe.Pointer, c int32, n uint64) unsafe.Pointer {
