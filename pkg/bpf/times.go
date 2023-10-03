@@ -1,7 +1,8 @@
 package bpf
 
 /*
-#include <sys/time.h>
+#include <time.h>
+
 
 unsigned long long get_os_usecs(void)
 {
