@@ -3,7 +3,6 @@ package bpf
 /*
 #include <time.h>
 
-
 unsigned long long get_os_usecs(void)
 {
   struct timespec ts;
