@@ -16,3 +16,7 @@ package datapath
 #cgo CFLAGS:  -I./../../ebpf/headers/linux -I./../../ebpf/common
 */
 import "C"
+
+var (
+	a C.struct_pdi_key
+)
