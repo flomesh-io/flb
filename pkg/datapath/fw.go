@@ -3,6 +3,8 @@ package datapath
 /*
 #include <stdint.h>
 
+#include <sys/types.h>
+
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
