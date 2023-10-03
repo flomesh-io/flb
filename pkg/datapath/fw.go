@@ -10,6 +10,7 @@ package datapath
 #include <errno.h>
 #include <assert.h>
 #include <sys/types.h>
+#include <linux/types.h>
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
