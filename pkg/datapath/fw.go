@@ -1,6 +1,7 @@
 package datapath
 
 /*
+#include <linux/types.h>
 #include "../../ebpf/common/common_pdi.h"
 */
 import "C"
