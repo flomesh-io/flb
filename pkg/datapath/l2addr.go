@@ -33,11 +33,11 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 			l2va = (*dp_l2vlan_act)(getPtrOffset(unsafe.Pointer(ddat),
 				sizeof_struct_dp_cmn_act))
 			if w.Tagged != 0 {
-				ddat.ca.act_type = C.DP_SET_ADD_L2VLAN
+				ddat.ca.act_type = DP_SET_ADD_L2VLAN
 				l2va.vlan = C.ushort(tk.Htons(uint16(w.BD)))
 				l2va.oport = C.ushort(w.PortNum)
 			} else {
-				ddat.ca.act_type = C.DP_SET_RM_L2VLAN
+				ddat.ca.act_type = DP_SET_RM_L2VLAN
 				l2va.vlan = C.ushort(tk.Htons(uint16(w.BD)))
 				l2va.oport = C.ushort(w.PortNum)
 			}
@@ -45,7 +45,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 
 		hwAddr := net.HardwareAddr(w.L2Addr[:])
 
-		sErr := llb_add_map_elem(C.LL_DP_SMAC_MAP,
+		sErr := llb_add_map_elem(LL_DP_SMAC_MAP,
 			unsafe.Pointer(skey),
 			unsafe.Pointer(sdat))
 		if sErr != nil {
@@ -54,12 +54,12 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 		}
 
 		if w.Tun == 0 {
-			dErr := llb_add_map_elem(C.LL_DP_DMAC_MAP,
+			dErr := llb_add_map_elem(LL_DP_DMAC_MAP,
 				unsafe.Pointer(dkey),
 				unsafe.Pointer(ddat))
 			if dErr != nil {
 				fmt.Printf("[DP] L2 DMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
-				llb_del_map_elem(C.LL_DP_SMAC_MAP, unsafe.Pointer(skey))
+				llb_del_map_elem(LL_DP_SMAC_MAP, unsafe.Pointer(skey))
 				return EbpfErrL2AddrAdd
 			}
 		}
@@ -67,9 +67,9 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 
 		return 0
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(C.LL_DP_SMAC_MAP, unsafe.Pointer(skey))
+		llb_del_map_elem(LL_DP_SMAC_MAP, unsafe.Pointer(skey))
 		if w.Tun == 0 {
-			llb_del_map_elem(C.LL_DP_DMAC_MAP, unsafe.Pointer(dkey))
+			llb_del_map_elem(LL_DP_DMAC_MAP, unsafe.Pointer(dkey))
 		}
 		return 0
 	}
