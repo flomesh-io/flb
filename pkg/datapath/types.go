@@ -13,6 +13,7 @@ package datapath
 #include <bpf.h>
 #include <pdi.h>
 #include <flb_dpapi.h>
+#include <common_pdi.c>
 #cgo CFLAGS:  -I./../../ebpf/headers/linux -I./../../ebpf/common
 */
 import "C"
