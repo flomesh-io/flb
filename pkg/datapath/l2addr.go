@@ -24,7 +24,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 
 	if w.Work == DpCreate {
 		sdat := new(dp_cmn_act)
-		sdat.act_type = C.DP_SET_NOP
+		sdat.act_type = DP_SET_NOP
 
 		ddat := new(dp_dmac_tact)
 		memset(unsafe.Pointer(ddat), 0, sizeof_struct_dp_dmac_tact)
