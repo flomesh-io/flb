@@ -15,11 +15,11 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 	var l2va *dp_l2vlan_act
 
 	skey := new(dp_smac_key)
-	C.memcpy(unsafe.Pointer(&skey.smac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
+	memcpy(unsafe.Pointer(&skey.smac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
 	skey.bd = C.ushort(uint16(w.BD))
 
 	dkey := new(dp_dmac_key)
-	C.memcpy(unsafe.Pointer(&dkey.dmac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
+	memcpy(unsafe.Pointer(&dkey.dmac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
 	dkey.bd = C.ushort(uint16(w.BD))
 
 	if w.Work == DpCreate {
@@ -27,11 +27,11 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 		sdat.act_type = C.DP_SET_NOP
 
 		ddat := new(dp_dmac_tact)
-		C.memset(unsafe.Pointer(ddat), 0, C.sizeof_struct_dp_dmac_tact)
+		memset(unsafe.Pointer(ddat), 0, sizeof_struct_dp_dmac_tact)
 
 		if w.Tun == 0 {
 			l2va = (*dp_l2vlan_act)(getPtrOffset(unsafe.Pointer(ddat),
-				C.sizeof_struct_dp_cmn_act))
+				sizeof_struct_dp_cmn_act))
 			if w.Tagged != 0 {
 				ddat.ca.act_type = C.DP_SET_ADD_L2VLAN
 				l2va.vlan = C.ushort(tk.Htons(uint16(w.BD)))
@@ -69,7 +69,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		llb_del_map_elem(C.LL_DP_SMAC_MAP, unsafe.Pointer(skey))
 		if w.Tun == 0 {
-			C.llb_del_map_elem(C.LL_DP_DMAC_MAP, unsafe.Pointer(dkey))
+			llb_del_map_elem(C.LL_DP_DMAC_MAP, unsafe.Pointer(dkey))
 		}
 		return 0
 	}
