@@ -1,5 +1,8 @@
 package datapath
 
+/*
+#include <string.h>
+*/
 import "C"
 import (
 	"fmt"
@@ -15,11 +18,11 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 	var l2va *dp_l2vlan_act
 
 	skey := new(dp_smac_key)
-	memcpy(unsafe.Pointer(&skey.smac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
+	C.memcpy(unsafe.Pointer(&skey.smac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
 	skey.bd = C.ushort(uint16(w.BD))
 
 	dkey := new(dp_dmac_key)
-	memcpy(unsafe.Pointer(&dkey.dmac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
+	C.memcpy(unsafe.Pointer(&dkey.dmac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
 	dkey.bd = C.ushort(uint16(w.BD))
 
 	if w.Work == DpCreate {
@@ -27,7 +30,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 		sdat.act_type = DP_SET_NOP
 
 		ddat := new(dp_dmac_tact)
-		memset(unsafe.Pointer(ddat), 0, sizeof_struct_dp_dmac_tact)
+		C.memset(unsafe.Pointer(ddat), 0, sizeof_struct_dp_dmac_tact)
 
 		if w.Tun == 0 {
 			l2va = (*dp_l2vlan_act)(getPtrOffset(unsafe.Pointer(ddat),
