@@ -3,6 +3,7 @@ package datapath
 /*
 #include <string.h>
 #include <sys/types.h>
+#include <linux/types.h>
 */
 import "C"
 import (
