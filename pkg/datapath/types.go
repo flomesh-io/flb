@@ -275,3 +275,7 @@ const (
 func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
 	return unsafe.Pointer(uintptr(ptr) + size)
 }
+
+func a() {
+	C.pdi_map_alloc()
+}
