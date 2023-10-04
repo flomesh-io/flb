@@ -89,17 +89,6 @@ type (
 	dp_map_notif         C.struct_ll_dp_map_notif
 )
 
-// pdi related defines in go
-type (
-	pdi_gen_key C.struct_pdi_gen_key
-	pdi_opts    C.struct_pdi_opts
-	pdi_data    C.struct_pdi_data
-	pdi_stats   C.struct_pdi_stats
-	pdi_val     C.struct_pdi_val
-	pdi_rule    C.struct_pdi_rule
-	pdi_map     C.struct_pdi_map
-)
-
 const (
 	sizeof_struct_dp_cmn_act           = C.sizeof_struct_dp_cmn_act
 	sizeof_struct_intf_key             = C.sizeof_struct_intf_key
@@ -260,6 +249,27 @@ const (
 	FLB_PIPE_COL_GREEN  = 1
 	FLB_PIPE_COL_YELLOW = 2
 	FLB_PIPE_COL_RED    = 3
+)
+
+// pdi related defines in go
+type (
+	pdi_gen_key C.struct_pdi_gen_key
+	pdi_opts    C.struct_pdi_opts
+	pdi_data    C.struct_pdi_data
+	pdi_stats   C.struct_pdi_stats
+	pdi_val     C.struct_pdi_val
+	pdi_rule    C.struct_pdi_rule
+	pdi_map     C.struct_pdi_map
+)
+
+const (
+	sizeof_struct_pdi_gen_key = C.sizeof_struct_pdi_gen_key
+	sizeof_struct_pdi_opts    = C.sizeof_struct_pdi_opts
+	sizeof_struct_pdi_data    = C.sizeof_struct_pdi_data
+	sizeof_struct_pdi_stats   = C.sizeof_struct_pdi_stats
+	sizeof_struct_pdi_val     = C.sizeof_struct_pdi_val
+	sizeof_struct_pdi_rule    = C.sizeof_struct_pdi_rule
+	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
 )
 
 func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
