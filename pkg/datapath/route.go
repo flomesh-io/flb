@@ -15,7 +15,7 @@ import (
 
 // DpRouteMod - routine to work on a ebpf route change request
 func DpRouteMod(w *RouteDpWorkQ) int {
-	var mapNum C.int
+	var mapNum int
 	var mapSnum C.int
 	var act *dp_rt_l3nh_act
 	var kPtr *[6]uint8
