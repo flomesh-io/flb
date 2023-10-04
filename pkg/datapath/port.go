@@ -1,94 +1,98 @@
 package datapath
 
+import "C"
 import (
-	"fmt"
+	"syscall"
 	"unsafe"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/cmn"
-	"github.com/flomesh-io/flb/pkg/config"
-	"github.com/flomesh-io/flb/pkg/consts"
-	"github.com/flomesh-io/flb/pkg/maps/intf"
-	"github.com/flomesh-io/flb/pkg/maps/txintf"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 // DpPortPropMod - routine to work on a ebpf port property request
 func DpPortPropMod(w *PortDpWorkQ) int {
-	var txK txintf.Key
-	var txV txintf.Act
-	var setIfi *intf.ActSetIfi
+	var txK C.uint
+	var txV C.uint
+	var setIfi *dp_intf_tact_set_ifi
 
 	// This is a special case
-	if w.LoadEbpf == config.FLB_TAP_NAME {
-		w.PortNum = consts.FLB_INTERFACES - 1
+	if w.LoadEbpf == FLB_MGMT_CHANNEL {
+		w.PortNum = FLB_INTERFACES - 1
 	}
 
-	key := new(intf.Key)
-	key.IngVId = tk.Htons(uint16(w.IngVlan))
-	key.IfIndex = uint32(w.OsPortNum)
+	key := new(dp_intf_key)
+	key.ing_vid = C.ushort(tk.Htons(uint16(w.IngVlan)))
+	key.ifindex = C.uint(w.OsPortNum)
 
-	txK = txintf.Key(w.PortNum)
+	txK = C.uint(w.PortNum)
 
 	if w.Work == DpCreate {
-		if w.LoadEbpf != "" && w.LoadEbpf != "lo" && w.LoadEbpf != config.FLB_TAP_NAME {
+
+		if w.LoadEbpf != "" && w.LoadEbpf != "lo" && w.LoadEbpf != FLB_MGMT_CHANNEL {
 			lRet := bpf.AttachTcProg(w.LoadEbpf)
 			if lRet != 0 {
 				tk.LogIt(tk.LogError, "ebpf load - %d error\n", w.PortNum)
-				return consts.EbpfErrEbpfLoad
+				syscall.Exit(1)
 			}
 		}
-		data := new(intf.Act)
-		data.Ca.ActType = consts.DP_SET_IFI
-		setIfi = (*intf.ActSetIfi)(unsafe.Pointer(&data.Anon0[0]))
+		data := new(dp_intf_tact)
+		C.memset(unsafe.Pointer(data), 0, sizeof_struct_dp_intf_tact)
+		data.ca.act_type = DP_SET_IFI
+		setIfi = (*dp_intf_tact_set_ifi)(getPtrOffset(unsafe.Pointer(data),
+			sizeof_struct_dp_cmn_act))
 
-		setIfi.XdpIfIdx = uint16(w.PortNum)
-		setIfi.Zone = uint16(w.SetZoneNum)
+		setIfi.xdp_ifidx = C.ushort(w.PortNum)
+		setIfi.zone = C.ushort(w.SetZoneNum)
 
-		setIfi.Bd = uint16(w.SetBD)
-		setIfi.Mirr = uint16(w.SetMirr)
-		setIfi.Polid = uint16(w.SetPol)
+		setIfi.bd = C.ushort(uint16(w.SetBD))
+		setIfi.mirr = C.ushort(w.SetMirr)
+		setIfi.polid = C.ushort(w.SetPol)
 
 		if w.Prop&cmn.PortPropUpp == cmn.PortPropUpp {
-			setIfi.Pprop = consts.FLB_DP_PORT_UPP
+			setIfi.pprop = FLB_DP_PORT_UPP
 		}
 
-		err := llb_add_map_elem(consts.LL_DP_INTF_MAP, key, data)
-		if err != nil {
-			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error\n", w.OsPortNum, w.IngVlan)
-			fmt.Printf("[DP] Link %d vlan %d -> %d add[NOK] %v\n", w.OsPortNum, w.IngVlan, w.PortNum, err)
-			return consts.EbpfErrPortPropAdd
+		sErr := llb_add_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key), unsafe.Pointer(data))
+
+		if sErr != nil {
+			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error: %s\n", w.OsPortNum, w.IngVlan, sErr.Error())
+			return EbpfErrPortPropAdd
 		}
+
 		tk.LogIt(tk.LogDebug, "ebpf intfmap added - %d vlan %d -> %d\n", w.OsPortNum, w.IngVlan, w.PortNum)
-		fmt.Printf("[DP] Link %d vlan %d -> %d add[OK]\n", w.OsPortNum, w.IngVlan, w.PortNum)
 
-		txV = txintf.Act(w.OsPortNum)
-		err = llb_add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
-		if err != nil {
-			llb_del_map_elem(consts.LL_DP_INTF_MAP, key)
-			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error\n", w.OsPortNum)
-			return consts.EbpfErrPortPropAdd
+		txV = C.uint(w.OsPortNum)
+		sErr = llb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
+		if sErr != nil {
+			llb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
+			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error: %s\n", w.OsPortNum, sErr.Error())
+			return EbpfErrPortPropAdd
 		}
 		tk.LogIt(tk.LogDebug, "ebpf txintfmap added - %d -> %d\n", w.PortNum, w.OsPortNum)
 		return 0
 	} else if w.Work == DpRemove {
+
 		// TX_INTF_MAP is array type so we can't delete it
 		// Rather we need to zero it out first
-		txV = txintf.Act(0)
-		llb_add_map_elem(consts.LL_DP_TX_INTF_MAP, &txK, &txV)
-		llb_del_map_elem(consts.LL_DP_TX_INTF_MAP, &txK)
-		llb_del_map_elem(consts.LL_DP_INTF_MAP, key)
+		txV = C.uint(0)
+		llb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
+		llb_del_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK))
+
+		llb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
+
 		if w.LoadEbpf != "" {
 			lRet := bpf.DetachTcProg(w.LoadEbpf)
 			if lRet != 0 {
 				tk.LogIt(tk.LogError, "ebpf unload - ifi %d error\n", w.OsPortNum)
-				return consts.EbpfErrEbpfLoad
+				return EbpfErrEbpfLoad
 			}
 			tk.LogIt(tk.LogDebug, "ebpf unloaded - ifi %d\n", w.OsPortNum)
 		}
+
 		return 0
 	}
 
-	return consts.EbpfErrWqUnk
+	return EbpfErrWqUnk
 }
