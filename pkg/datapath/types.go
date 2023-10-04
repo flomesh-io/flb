@@ -231,7 +231,7 @@ const (
 )
 
 const (
-	FLB_DP_PORT_UPP = C.FLB_DP_PORT_UPP
+	FLB_DP_PORT_UPP = 0x1
 )
 
 func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
