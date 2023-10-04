@@ -121,6 +121,7 @@ const (
 	sizeof_struct_dp_rdr_act           = C.sizeof_struct_dp_rdr_act
 	sizeof_struct_ll_dp_map_notif      = C.sizeof_struct_ll_dp_map_notif
 	sizeof_struct_bpf_lpm_trie_key     = 0x4
+	sizeof_struct_bpf_spin_lock        = 0x4
 )
 
 const (
@@ -241,6 +242,13 @@ const (
 	FLB_TUN_STT   = 3
 	FLB_TUN_GRE   = 4
 	FLB_TUN_IPIP  = 5
+)
+
+const (
+	FLB_PIPE_COL_NONE   = 0
+	FLB_PIPE_COL_GREEN  = 1
+	FLB_PIPE_COL_YELLOW = 2
+	FLB_PIPE_COL_RED    = 3
 )
 
 func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {

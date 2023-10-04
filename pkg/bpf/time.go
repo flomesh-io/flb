@@ -21,12 +21,10 @@ unsigned long long get_os_nsecs(void)
 */
 import "C"
 
-func GetOsUSecs() uint64 {
-	usecs := C.get_os_usecs()
-	return uint64(usecs)
+func GetOsUSecs() C.ulonglong {
+	return C.get_os_usecs()
 }
 
-func GetOsNSecs() uint64 {
-	nsecs := C.get_os_nsecs()
-	return uint64(nsecs)
+func GetOsNSecs() C.ulonglong {
+	return C.get_os_nsecs()
 }
