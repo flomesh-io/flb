@@ -37,10 +37,10 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 
 		kPtr[0] = uint8(w.ZoneNum >> 8 & 0xff)
 		kPtr[1] = uint8(w.ZoneNum & 0xff)
-		kPtr[2] = uint8(w.Dst.IP[0])
-		kPtr[3] = uint8(w.Dst.IP[1])
-		kPtr[4] = uint8(w.Dst.IP[2])
-		kPtr[5] = uint8(w.Dst.IP[3])
+		kPtr[2] = uint8(w.Dst.IP[12])
+		kPtr[3] = uint8(w.Dst.IP[13])
+		kPtr[4] = uint8(w.Dst.IP[14])
+		kPtr[5] = uint8(w.Dst.IP[15])
 		key = unsafe.Pointer(key4)
 		mapNum = LL_DP_RTV4_MAP
 		mapSnum = LL_DP_RTV4_STATS_MAP
@@ -87,7 +87,7 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 			fmt.Printf("[DP] ROUTE %s add[NOK] error: %s\n", w.Dst.String(), sErr.Error())
 			return EbpfErrRt4Add
 		}
-		fmt.Printf("[DP] ROUTE %s add[OK]\n", w.Dst.String())
+		fmt.Printf("[DP] ROUTE %s add[OK] \n", w.Dst.String())
 		return 0
 	} else if w.Work == DpRemove {
 		llb_del_map_elem(mapNum, unsafe.Pointer(key))
