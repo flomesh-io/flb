@@ -89,6 +89,17 @@ type (
 	dp_map_notif         C.struct_ll_dp_map_notif
 )
 
+// pdi related defines in go
+type (
+	pdi_gen_key C.struct_pdi_gen_key
+	pdi_opts    C.struct_pdi_opts
+	pdi_data    C.struct_pdi_data
+	pdi_stats   C.struct_pdi_stats
+	pdi_val     C.struct_pdi_val
+	pdi_rule    C.struct_pdi_rule
+	pdi_map     C.struct_pdi_map
+)
+
 const (
 	sizeof_struct_dp_cmn_act           = C.sizeof_struct_dp_cmn_act
 	sizeof_struct_intf_key             = C.sizeof_struct_intf_key
