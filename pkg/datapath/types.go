@@ -280,5 +280,7 @@ const (
 )
 
 func a() {
-	C.pdi_map_alloc(C.CString("aa"), nil, nil)
+	var add_opt pdi_add_map_op_t
+	var del_opt pdi_del_map_op_t
+	C.pdi_map_alloc(C.CString("aa"), add_opt, del_opt)
 }
