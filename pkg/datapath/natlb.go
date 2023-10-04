@@ -97,7 +97,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 		}
 
 		// Any unused end-points should be marked inactive
-		for i := len(w.EndPoints); i < LLB_MAX_NXFRMS; i++ {
+		for i := len(w.EndPoints); i < FLB_MAX_NXFRMS; i++ {
 			nxfa := (*dp_mf_xfrm_inf)(unsafe.Pointer(&dat.nxfrms[i]))
 			nxfa.inactive = 1
 		}
