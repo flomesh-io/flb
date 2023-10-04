@@ -251,6 +251,10 @@ const (
 	FLB_PIPE_COL_RED    = 3
 )
 
+func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
+	return unsafe.Pointer(uintptr(ptr) + size)
+}
+
 // pdi related defines in go
 type (
 	pdi_gen_key C.struct_pdi_gen_key
@@ -260,6 +264,9 @@ type (
 	pdi_val     C.struct_pdi_val
 	pdi_rule    C.struct_pdi_rule
 	pdi_map     C.struct_pdi_map
+
+	pdi_add_map_op_t C.pdi_add_map_op_t
+	pdi_del_map_op_t C.pdi_del_map_op_t
 )
 
 const (
@@ -272,10 +279,6 @@ const (
 	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
 )
 
-func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
-	return unsafe.Pointer(uintptr(ptr) + size)
-}
-
 func a() {
-	C.pdi_map_alloc()
+	C.pdi_map_alloc(C.CString("aa"), nil, nil)
 }
