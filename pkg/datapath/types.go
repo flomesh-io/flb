@@ -235,6 +235,14 @@ const (
 	FLB_DP_PORT_UPP = 0x1
 )
 
+const (
+	FLB_TUN_VXLAN = 1
+	FLB_TUN_GTP   = 2
+	FLB_TUN_STT   = 3
+	FLB_TUN_GRE   = 4
+	FLB_TUN_IPIP  = 5
+)
+
 func getPtrOffset(ptr unsafe.Pointer, size uintptr) unsafe.Pointer {
 	return unsafe.Pointer(uintptr(ptr) + size)
 }

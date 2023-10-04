@@ -1,62 +1,79 @@
 package datapath
 
+/*
+#include <string.h>
+*/
+import "C"
 import (
+	"fmt"
+	"net"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/consts"
-	"github.com/flomesh-io/flb/pkg/maps"
-	"github.com/flomesh-io/flb/pkg/maps/tmac"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 // DpRouterMacMod - routine to work on a ebpf rt-mac change request
 func DpRouterMacMod(w *RouterMacDpWorkQ) int {
-	key := new(tmac.Key)
-	copy(key.Mac[:], w.L2Addr[:])
+	key := new(dp_tmac_key)
+	C.memcpy(unsafe.Pointer(&key.mac[0]), unsafe.Pointer(&w.L2Addr[0]), 6)
 	switch {
 	case w.TunType == DpTunVxlan:
-		key.TunType = consts.FLB_TUN_VXLAN
+		key.tun_type = FLB_TUN_VXLAN
 	case w.TunType == DpTunGre:
-		key.TunType = consts.FLB_TUN_GRE
+		key.tun_type = FLB_TUN_GRE
 	case w.TunType == DpTunGtp:
-		key.TunType = consts.FLB_TUN_GTP
+		key.tun_type = FLB_TUN_GTP
 	case w.TunType == DpTunStt:
-		key.TunType = consts.FLB_TUN_STT
+		key.tun_type = FLB_TUN_STT
 	}
 
-	key.TunnelId = w.TunID
+	key.tunnel_id = C.uint(w.TunID)
 
 	if w.Work == DpCreate {
-		dat := new(tmac.Act)
+		dat := new(dp_cmn_act)
 		if w.TunID != 0 {
 			if w.NhNum == 0 {
-				dat.Ca.ActType = consts.DP_SET_RM_VXLAN
-				rtNhAct := (*maps.RtNhAct)(unsafe.Pointer(&dat.Anon0[0]))
-				rtNhAct.NhNum = 0
-				rtNhAct.TId = 0
-				rtNhAct.Bd = uint16(w.BD)
+				dat.act_type = DP_SET_RM_VXLAN
+				rtNhAct := (*dp_rt_nh_act)(getPtrOffset(unsafe.Pointer(dat),
+					sizeof_struct_dp_cmn_act))
+				C.memset(unsafe.Pointer(rtNhAct), 0, sizeof_struct_dp_rt_nh_act)
+				rtNhAct.nh_num = 0
+				rtNhAct.tid = 0
+				rtNhAct.bd = C.ushort(w.BD)
 			} else {
 				/* No need for tunnel ID in case of Access side */
-				key.TunnelId = 0
-				key.TunType = 0
-				dat.Ca.ActType = consts.DP_SET_RT_TUN_NH
-				rtNhAct := (*maps.RtNhAct)(unsafe.Pointer(&dat.Anon0[0]))
-				rtNhAct.NhNum = uint16(w.NhNum)
+				key.tunnel_id = 0
+				key.tun_type = 0
+				dat.act_type = DP_SET_RT_TUN_NH
+				rtNhAct := (*dp_rt_nh_act)(getPtrOffset(unsafe.Pointer(dat),
+					sizeof_struct_dp_cmn_act))
+				C.memset(unsafe.Pointer(rtNhAct), 0, sizeof_struct_dp_rt_nh_act)
+
+				rtNhAct.nh_num = C.ushort(w.NhNum)
 				tid := (w.TunID << 8) & 0xffffff00
-				rtNhAct.TId = tk.Htonl(tid)
+				rtNhAct.tid = C.uint(tk.Htonl(tid))
 			}
 		} else {
-			dat.Ca.ActType = consts.DP_SET_L3_EN
+			dat.act_type = DP_SET_L3_EN
 		}
 
-		err := llb_add_map_elem(consts.LL_DP_TMAC_MAP, key, dat)
-		if err != nil {
-			return consts.EbpfErrTmacAdd
+		hwAddr := net.HardwareAddr(w.L2Addr[:])
+
+		sErr := llb_add_map_elem(LL_DP_TMAC_MAP,
+			unsafe.Pointer(key),
+			unsafe.Pointer(dat))
+
+		if sErr != nil {
+			fmt.Printf("[DP] TMAC %s add[NOK] error: %s\n", hwAddr.String(), sErr.Error())
+			return EbpfErrTmacAdd
 		}
+
+		fmt.Printf("[DP] TMAC %s add[OK]\n", hwAddr.String())
 		return 0
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(consts.LL_DP_TMAC_MAP, key)
+		llb_del_map_elem(LL_DP_TMAC_MAP, unsafe.Pointer(key))
 	}
-	return consts.EbpfErrWqUnk
+
+	return EbpfErrWqUnk
 }
