@@ -2,7 +2,6 @@ package datapath
 
 import (
 	"fmt"
-	"reflect"
 	"sync"
 
 	"github.com/cilium/ebpf"
@@ -308,21 +307,21 @@ func llb_add_map_elem(tbl int, k, v interface{}) error {
 		tbl == consts.LL_DP_TMAC_MAP ||
 		tbl == consts.LL_DP_FW4_MAP ||
 		tbl == consts.LL_DP_RTV4_MAP {
-		cidx := uint32(0)
+		//cidx := uint32(0)
 
 		if tbl == consts.LL_DP_FW4_MAP {
 			//struct dp_fwv4_ent *e = k;
 			//	cidx = e->fwa.ca.cidx;
 		} else {
-			rv := reflect.Indirect(reflect.ValueOf(v))
-			field := rv.FieldByName(`Ca`)
-			if field.CanAddr() {
-				fv := field.Addr().Interface()
-				if ca, ok := fv.(*maps.CmnAct); ok {
-					cidx = ca.CIdx
-				}
-			}
-			llb_clear_map_stats(tbl, cidx)
+			//rv := reflect.Indirect(reflect.ValueOf(v))
+			//field := rv.FieldByName(`Ca`)
+			//if field.CanAddr() {
+			//	fv := field.Addr().Interface()
+			//	if ca, ok := fv.(*maps.CmnAct); ok {
+			//		cidx = ca.CIdx
+			//	}
+			//}
+			//llb_clear_map_stats(tbl, cidx)
 		}
 	}
 
