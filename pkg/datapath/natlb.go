@@ -31,7 +31,7 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 
 	if w.Work == DpCreate {
 		dat := new(dp_nat_tacts)
-		C.memset(unsafe.Pointer(dat), 0, C.sizeof_struct_dp_nat_tacts)
+		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_nat_tacts)
 		if w.NatType == DpSnat {
 			dat.ca.act_type = DP_SET_SNAT
 		} else if w.NatType == DpDnat || w.NatType == DpFullNat {
