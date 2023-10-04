@@ -1,5 +1,8 @@
 package datapath
 
+/*
+#include <string.h>
+*/
 import "C"
 import (
 	"fmt"
