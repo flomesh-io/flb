@@ -279,8 +279,12 @@ const (
 	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
 )
 
-func a() {
+func AA() {
 	var add_opt pdi_add_map_op_t
 	var del_opt pdi_del_map_op_t
-	C.pdi_map_alloc(C.CString("aa"), add_opt, del_opt)
+	pdiMap := C.pdi_map_alloc(C.CString("aa"), add_opt, del_opt)
+
+	pdiRule := new(pdi_rule)
+	nr := C.int(1)
+	C.pdi_rule_insert(pdiMap, pdiRule, &nr)
 }
