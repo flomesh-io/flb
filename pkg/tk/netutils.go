@@ -206,11 +206,3 @@ func NetGetIfiStats(ifName string, ifs *IfiStat) int {
 
 	return 0
 }
-
-func ConvNetIP2DPv6Addr(addr unsafe.Pointer, ipv6 net.IP) {
-	aPtr := (*byte)(addr)
-	for bp := 0; bp < 16; bp++ {
-		*aPtr = ipv6[bp]
-		aPtr = (*byte)(unsafe.Pointer(uintptr(unsafe.Pointer(aPtr)) + 1))
-	}
-}

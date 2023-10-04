@@ -52,7 +52,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 			unsafe.Pointer(skey),
 			unsafe.Pointer(sdat))
 		if sErr != nil {
-			fmt.Printf("[DP] L2 SMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
+			fmt.Printf("[DP] L2 SMAC %s add[NOK] error: %s\n", hwAddr.String(), sErr.Error())
 			return EbpfErrL2AddrAdd
 		}
 
@@ -61,7 +61,7 @@ func DpL2AddrMod(w *L2AddrDpWorkQ) int {
 				unsafe.Pointer(dkey),
 				unsafe.Pointer(ddat))
 			if dErr != nil {
-				fmt.Printf("[DP] L2 DMAC %s add[NOK] %x\n", hwAddr.String(), sErr)
+				fmt.Printf("[DP] L2 DMAC %s add[NOK] error: %s\n", hwAddr.String(), sErr.Error())
 				llb_del_map_elem(LL_DP_SMAC_MAP, unsafe.Pointer(skey))
 				return EbpfErrL2AddrAdd
 			}
