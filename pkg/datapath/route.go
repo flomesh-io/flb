@@ -6,22 +6,17 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/consts"
-	"github.com/flomesh-io/flb/pkg/maps"
-	"github.com/flomesh-io/flb/pkg/maps/rt"
-	"github.com/flomesh-io/flb/pkg/maps/rt/rtv4"
-	"github.com/flomesh-io/flb/pkg/maps/rt/rtv6"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 // DpRouteMod - routine to work on a ebpf route change request
 func DpRouteMod(w *RouteDpWorkQ) int {
-	var mapNum int
-	var mapSNum int
-	var act *maps.RtNhAct
+	var mapNum C.int
+	var mapSnum C.int
+	var act *dp_rt_l3nh_act
 	var kPtr *[6]uint8
-	var key interface{}
+	var key unsafe.Pointer
 
 	if w.ZoneNum == 0 {
 		tk.LogIt(tk.LogError, "ZoneNum must be specified\n")
@@ -29,63 +24,75 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 	}
 
 	if tk.IsNetIPv4(w.Dst.IP.String()) {
-		key4 := new(rtv4.Key)
+		key4 := new(dp_rtv4_key)
 
 		length, _ := w.Dst.Mask.Size()
 		length += 16 /* 16-bit ZoneNum + prefix-len */
-		key4.L.PrefixLen = uint32(length)
-		kPtr = (*[6]uint8)(unsafe.Pointer(&key4.Anon0[0]))
+		key4.l.prefixlen = C.uint(length)
+		kPtr = (*[6]uint8)(getPtrOffset(unsafe.Pointer(key4),
+			sizeof_struct_bpf_lpm_trie_key))
 
 		kPtr[0] = uint8(w.ZoneNum >> 8 & 0xff)
 		kPtr[1] = uint8(w.ZoneNum & 0xff)
-		kPtr[2] = uint8(w.Dst.IP[12])
-		kPtr[3] = uint8(w.Dst.IP[13])
-		kPtr[4] = uint8(w.Dst.IP[14])
-		kPtr[5] = uint8(w.Dst.IP[15])
-		key = key4
-		mapNum = consts.LL_DP_RTV4_MAP
-		mapSNum = consts.LL_DP_RTV4_STATS_MAP
+		kPtr[2] = uint8(w.Dst.IP[0])
+		kPtr[3] = uint8(w.Dst.IP[1])
+		kPtr[4] = uint8(w.Dst.IP[2])
+		kPtr[5] = uint8(w.Dst.IP[3])
+		key = unsafe.Pointer(key4)
+		mapNum = LL_DP_RTV4_MAP
+		mapSnum = LL_DP_RTV4_STATS_MAP
 	} else {
-		key6 := new(rtv6.Key)
+		key6 := new(dp_rtv6_key)
 
 		length, _ := w.Dst.Mask.Size()
-		key6.L.PrefixLen = uint32(length)
+		key6.l.prefixlen = C.uint(length)
+
+		k6Ptr := (*C.uchar)(getPtrOffset(unsafe.Pointer(key6),
+			sizeof_struct_bpf_lpm_trie_key))
 
 		for bp := 0; bp < 16; bp++ {
-			key6.Anon0[bp] = w.Dst.IP[bp]
+			*k6Ptr = C.uchar(w.Dst.IP[bp])
+			k6Ptr = (*C.uchar)(getPtrOffset(unsafe.Pointer(k6Ptr),
+				C.sizeof_uchar))
 		}
-		key = key6
-		mapNum = consts.LL_DP_RTV6_MAP
-		mapSNum = consts.LL_DP_RTV6_STATS_MAP
+		key = unsafe.Pointer(key6)
+		mapNum = LL_DP_RTV6_MAP
+		mapSnum = LL_DP_RTV6_STATS_MAP
 	}
 
 	if w.Work == DpCreate {
-		dat := new(rt.Act)
+		dat := new(dp_rt_tact)
+		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_rt_tact)
 
 		if w.NMark >= 0 {
-			dat.Ca.ActType = consts.DP_SET_RT_NHNUM
-			act = (*maps.RtNhAct)(unsafe.Pointer(&dat.Anon0[0]))
-			act.NhNum = uint16(w.NMark)
+			dat.ca.act_type = DP_SET_RT_NHNUM
+			act = (*dp_rt_l3nh_act)(getPtrOffset(unsafe.Pointer(dat),
+				sizeof_struct_dp_cmn_act))
+			act.nh_num = C.ushort(w.NMark)
 		} else {
-			dat.Ca.ActType = consts.DP_SET_TOCP
+			dat.ca.act_type = DP_SET_TOCP
 		}
 
 		if w.RtMark > 0 {
-			dat.Ca.CIdx = uint32(w.RtMark)
+			dat.ca.cidx = C.uint(w.RtMark)
 		}
 
-		err := llb_add_map_elem(mapNum, key, dat)
-		if err != nil {
-			fmt.Printf("[DP] RT %s add[NOK] %v\n", w.Dst, err)
-			return consts.EbpfErrRt4Add
+		sErr := llb_add_map_elem(mapNum,
+			unsafe.Pointer(key),
+			unsafe.Pointer(dat))
+		if sErr != nil {
+			fmt.Printf("[DP] ROUTE %s add[NOK] error: %s\n", w.Dst.String(), sErr.Error())
+			return EbpfErrRt4Add
 		}
+		fmt.Printf("[DP] ROUTE %s add[OK]\n", w.Dst.String())
 		return 0
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(mapNum, key)
+		llb_del_map_elem(mapNum, unsafe.Pointer(key))
 		if w.RtMark > 0 {
-			llb_clear_map_stats(mapSNum, uint32(w.RtMark))
+			llb_clear_map_stats(mapSnum, C.uint(w.RtMark))
 		}
 		return 0
 	}
-	return consts.EbpfErrWqUnk
+
+	return EbpfErrWqUnk
 }
