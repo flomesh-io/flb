@@ -1,38 +1,51 @@
 package datapath
 
+/*
+#include <string.h>
+*/
+import "C"
 import (
+	"fmt"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/consts"
-	"github.com/flomesh-io/flb/pkg/maps"
-	"github.com/flomesh-io/flb/pkg/maps/mirr"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
 // DpMirrMod - routine to work on a ebpf mirror modify request
 func DpMirrMod(w *MirrDpWorkQ) int {
-	key := mirr.Key(w.Mark)
+	key := C.uint(w.Mark)
+
 	if w.Work == DpCreate {
-		dat := new(mirr.Act)
+		dat := new(dp_mirr_tact)
+		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_mirr_tact)
+
 		if w.MiBD != 0 {
-			dat.Ca.ActType = consts.DP_SET_ADD_L2VLAN
+			dat.ca.act_type = DP_SET_ADD_L2VLAN
 		} else {
-			dat.Ca.ActType = consts.DP_SET_RM_L2VLAN
+			dat.ca.act_type = DP_SET_RM_L2VLAN
 		}
-		la := (*maps.L2VlanAct)(unsafe.Pointer(&dat.Anon0[0]))
-		la.OPort = uint16(w.MiPortNum)
-		la.Vlan = uint16(w.MiBD)
-		err := llb_add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
-		if err != nil {
+
+		la := (*dp_l2vlan_act)(getPtrOffset(unsafe.Pointer(dat), sizeof_struct_dp_cmn_act))
+
+		la.oport = C.ushort(w.MiPortNum)
+		la.vlan = C.ushort(w.MiBD)
+
+		sErr := llb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
+
+		if sErr != nil {
 			*w.Status = 1
-			return consts.EbpfErrMirrAdd
+			fmt.Printf("[DP] MIRROR %s %d add[NOK] error: %s\n", w.Name, w.Mark, sErr.Error())
+			return EbpfErrMirrAdd
 		}
+
 		*w.Status = 0
+		fmt.Printf("[DP] MIRROR %s %d add[OK]\n", w.Name, w.Mark)
 	} else if w.Work == DpRemove {
 		// Array map types need to be zeroed out first
-		dat := new(mirr.Act)
-		llb_add_map_elem(consts.LL_DP_MIRROR_MAP, &key, dat)
-		llb_del_map_elem(consts.LL_DP_MIRROR_MAP, &key)
+		dat := new(dp_mirr_tact)
+		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_mirr_tact)
+		llb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
+		llb_del_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key))
 		return 0
 	}
 	return 0
