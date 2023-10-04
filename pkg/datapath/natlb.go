@@ -2,6 +2,7 @@ package datapath
 
 /*
 #include <string.h>
+#include <sys/types.h>
 */
 import "C"
 import (
