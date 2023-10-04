@@ -92,7 +92,7 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 	} else if w.Work == DpRemove {
 		llb_del_map_elem(mapNum, unsafe.Pointer(key))
 		if w.RtMark > 0 {
-			llb_clear_map_stats(mapSnum, C.uint(w.RtMark))
+			llb_clear_map_stats(mapSnum, uint32(w.RtMark))
 		}
 		return 0
 	}
