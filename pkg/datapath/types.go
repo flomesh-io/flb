@@ -308,3 +308,15 @@ func AA() {
 	//ok := (*pdi_map)(unsafe.Pointer(pdiMap))
 	//fmt.Printf("{%s}\n", C.GoString((*C.char)(&ok.name[0])))
 }
+
+func setupUfw4PdiMap() {
+	fwName := C.CString("ufw4")
+	xh.ufw4 = C.pdi_map_alloc(fwName, nil, nil)
+	C.free(unsafe.Pointer(fwName))
+}
+
+func setupUfw6PdiMap() {
+	fwName := C.CString("ufw6")
+	xh.ufw4 = C.pdi_map_alloc(fwName, nil, nil)
+	C.free(unsafe.Pointer(fwName))
+}

@@ -282,6 +282,8 @@ func DpInit() {
 	setupCtCtrMap(config.NodeNo)
 	setupCpuMap()
 	setupLiveCpuMap()
+	setupUfw4PdiMap()
+	setupUfw6PdiMap()
 }
 
 func llb_del_map_elem(tbl int, k interface{}) error {
