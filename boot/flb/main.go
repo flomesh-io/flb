@@ -55,6 +55,7 @@ func main() {
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)
 
 	go func() {
+		time.Sleep(10 * time.Second)
 		bpf.ShowMap("rt_v4_map", nil, nil)
 	}()
 
