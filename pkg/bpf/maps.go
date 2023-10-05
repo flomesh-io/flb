@@ -58,6 +58,7 @@ func ShowMap(mapName string, key, value interface{}) {
 			valueBytes, _ := pinMap.LookupBytes(key)
 			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", valueBytes)
 		}
+		fmt.Println("Success....")
 	}
 }
 
