@@ -45,7 +45,8 @@ func main() {
 
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGCHLD, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 
-	loadAttachEBpf()
+	nodeNo := uint32(0)
+	loadAttachEBpf(nodeNo)
 
 	dpH := new(DpEbpfH)
 	nDp := lbnet.DpBrokerInit(dpH)

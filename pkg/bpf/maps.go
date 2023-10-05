@@ -6,11 +6,11 @@ import (
 
 	"github.com/cilium/ebpf"
 
-	"github.com/flomesh-io/flb/pkg/config"
+	dp "github.com/flomesh-io/flb/pkg/datapath"
 )
 
 func LoadMap(mapName string) (*ebpf.Map, error) {
-	pinFile := fmt.Sprintf("%s/%s", config.BPF_FS_BASE, mapName)
+	pinFile := fmt.Sprintf("%s/%s", dp.FLB_DB_MAP_PDIR, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	return ebpf.LoadPinnedMap(pinFile, opts)
 }

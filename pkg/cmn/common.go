@@ -35,7 +35,7 @@ const (
 
 const (
 	// CertPath - SSL certificates path
-	CertPath = "/opt/fln/cert/"
+	CertPath = "/opt/flb/cert/"
 
 	// CACertFileName - flb CA cert file
 	CACertFileName = "rootCA.crt"

@@ -7,24 +7,23 @@ import (
 	"os"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
-	"github.com/flomesh-io/flb/pkg/config"
 	dp "github.com/flomesh-io/flb/pkg/datapath"
 )
 
-func loadAttachEBpf() {
-	if ret := bpf.LinkTapDev(config.FLB_TAP_NAME); ret == 0 {
+func loadAttachEBpf(nodeNo uint32) {
+	if ret := bpf.LinkTapDev(dp.FLB_MGMT_CHANNEL); ret == 0 {
 		bpf.LoadXdpProg()
 
-		dp.DpInit()
+		dp.DpInit(nodeNo)
 
-		bpf.AttachXdpProg(config.FLB_TAP_NAME)
-		bpf.AttachTcProg(config.FLB_TAP_NAME)
+		bpf.AttachXdpProg(dp.FLB_MGMT_CHANNEL)
+		bpf.AttachTcProg(dp.FLB_MGMT_CHANNEL)
 	}
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.FLB_TAP_NAME {
+			if intf.Name == dp.FLB_MGMT_CHANNEL {
 				continue
 			}
 			bpf.AttachTcProg(intf.Name)
@@ -33,14 +32,14 @@ func loadAttachEBpf() {
 }
 
 func unloadEBpf() {
-	bpf.DetachTcProg(config.FLB_TAP_NAME)
-	bpf.DetachXdpProg(config.FLB_TAP_NAME)
-	bpf.UnlinkTapDev(config.FLB_TAP_NAME)
+	bpf.DetachTcProg(dp.FLB_MGMT_CHANNEL)
+	bpf.DetachXdpProg(dp.FLB_MGMT_CHANNEL)
+	bpf.UnlinkTapDev(dp.FLB_MGMT_CHANNEL)
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.FLB_TAP_NAME {
+			if intf.Name == dp.FLB_MGMT_CHANNEL {
 				continue
 			}
 			bpf.DetachTcProg(intf.Name)
@@ -52,8 +51,8 @@ func unloadEBpf() {
 
 func removeEBpfMaps() {
 	folders := []string{
-		config.BPF_FS_BASE,
-		fmt.Sprintf(`%s/tc/globals`, config.BPF_FS_BASE),
+		dp.FLB_DB_MAP_PDIR,
+		fmt.Sprintf(`%s/tc/globals`, dp.FLB_DB_MAP_PDIR),
 	}
 
 	for _, folder := range folders {

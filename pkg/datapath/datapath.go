@@ -9,8 +9,6 @@ import (
 
 	"github.com/flomesh-io/flb/internal"
 	"github.com/flomesh-io/flb/pkg/bpf"
-	"github.com/flomesh-io/flb/pkg/config"
-	"github.com/flomesh-io/flb/pkg/consts"
 	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/maps/cpu"
 	"github.com/flomesh-io/flb/pkg/maps/ctctr"
@@ -97,190 +95,190 @@ func GetMap(mapIndex int) *DpMap {
 	return emap
 }
 
-func DpInit() {
+func DpInit(nodeNo uint32) {
 	xh = new(dp)
 
-	if emap, err := GetMap(consts.LL_DP_INTF_MAP).loadMap(`intf_map`); err == nil {
+	if emap, err := GetMap(LL_DP_INTF_MAP).loadMap(`intf_map`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_INTF_STATS_MAP).loadMap(`intf_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_INTF_STATS_MAP).loadMap(`intf_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_BD_STATS_MAP).loadMap(`bd_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_BD_STATS_MAP).loadMap(`bd_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_SMAC_MAP).loadMap(`smac_map`); err == nil {
+	if emap, err := GetMap(LL_DP_SMAC_MAP).loadMap(`smac_map`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_TMAC_MAP).loadMap(`tmac_map`); err == nil {
+	if emap, err := GetMap(LL_DP_TMAC_MAP).loadMap(`tmac_map`); err == nil {
 		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_TMAC_STATS_MAP
+		emap.pb_xtid = LL_DP_TMAC_STATS_MAP
 	}
 
-	if emap, err := GetMap(consts.LL_DP_TMAC_STATS_MAP).loadMap(`tmac_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_TMAC_STATS_MAP).loadMap(`tmac_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_CT_MAP).loadMap(`ct_map`); err == nil {
+	if emap, err := GetMap(LL_DP_CT_MAP).loadMap(`ct_map`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_CT_STATS_MAP).loadMap(`ct_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_CT_STATS_MAP).loadMap(`ct_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_RTV4_MAP).loadMap(`rt_v4_map`); err == nil {
+	if emap, err := GetMap(LL_DP_RTV4_MAP).loadMap(`rt_v4_map`); err == nil {
 		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_RTV4_STATS_MAP
+		emap.pb_xtid = LL_DP_RTV4_STATS_MAP
 	}
 
-	if emap, err := GetMap(consts.LL_DP_RTV4_STATS_MAP).loadMap(`rt_v4_stats_map`); err == nil {
-		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
-	}
-
-	if emap, err := GetMap(consts.LL_DP_RTV6_MAP).loadMap(`rt_v6_map`); err == nil {
-		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_RTV6_STATS_MAP
-	}
-
-	if emap, err := GetMap(consts.LL_DP_RTV6_STATS_MAP).loadMap(`rt_v6_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_RTV4_STATS_MAP).loadMap(`rt_v4_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_NH_MAP).loadMap(`nh_map`); err == nil {
-		emap.has_pb = false
+	if emap, err := GetMap(LL_DP_RTV6_MAP).loadMap(`rt_v6_map`); err == nil {
+		emap.has_pb = true
+		emap.pb_xtid = LL_DP_RTV6_STATS_MAP
 	}
 
-	if emap, err := GetMap(consts.LL_DP_DMAC_MAP).loadMap(`dmac_map`); err == nil {
-		emap.has_pb = false
-	}
-
-	if emap, err := GetMap(consts.LL_DP_TX_INTF_MAP).loadMap(`tx_intf_map`); err == nil {
-		emap.has_pb = false
-	}
-
-	if emap, err := GetMap(consts.LL_DP_MIRROR_MAP).loadMap(`mirr_map`); err == nil {
-		emap.has_pb = false
-	}
-
-	if emap, err := GetMap(consts.LL_DP_TX_INTF_STATS_MAP).loadMap(`tx_intf_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_RTV6_STATS_MAP).loadMap(`rt_v6_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_TX_BD_STATS_MAP).loadMap(`tx_bd_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_NH_MAP).loadMap(`nh_map`); err == nil {
+		emap.has_pb = false
+	}
+
+	if emap, err := GetMap(LL_DP_DMAC_MAP).loadMap(`dmac_map`); err == nil {
+		emap.has_pb = false
+	}
+
+	if emap, err := GetMap(LL_DP_TX_INTF_MAP).loadMap(`tx_intf_map`); err == nil {
+		emap.has_pb = false
+	}
+
+	if emap, err := GetMap(LL_DP_MIRROR_MAP).loadMap(`mirr_map`); err == nil {
+		emap.has_pb = false
+	}
+
+	if emap, err := GetMap(LL_DP_TX_INTF_STATS_MAP).loadMap(`tx_intf_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_FCV4_MAP).loadMap(`fc_v4_map`); err == nil {
-		emap.has_pb = false
-	}
-
-	if emap, err := GetMap(consts.LL_DP_FCV4_STATS_MAP).loadMap(`fc_v4_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_TX_BD_STATS_MAP).loadMap(`tx_bd_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_PGM_MAP).loadMap(`pgm_tbl`); err == nil {
+	if emap, err := GetMap(LL_DP_FCV4_MAP).loadMap(`fc_v4_map`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_POL_MAP).loadMap(`polx_map`); err == nil {
+	if emap, err := GetMap(LL_DP_FCV4_STATS_MAP).loadMap(`fc_v4_stats_map`); err == nil {
+		emap.has_pb = true
+		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+	}
+
+	if emap, err := GetMap(LL_DP_PGM_MAP).loadMap(`pgm_tbl`); err == nil {
+		emap.has_pb = false
+	}
+
+	if emap, err := GetMap(LL_DP_POL_MAP).loadMap(`polx_map`); err == nil {
 		emap.has_pb = false
 		emap.has_pol = 1
 	}
 
-	if emap, err := GetMap(consts.LL_DP_NAT_MAP).loadMap(`nat_map`); err == nil {
+	if emap, err := GetMap(LL_DP_NAT_MAP).loadMap(`nat_map`); err == nil {
 		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_NAT_STATS_MAP
+		emap.pb_xtid = LL_DP_NAT_STATS_MAP
 	}
 
-	if emap, err := GetMap(consts.LL_DP_NAT_STATS_MAP).loadMap(`nat_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_NAT_STATS_MAP).loadMap(`nat_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_PKT_PERF_RING).loadMap(`pkt_ring`); err == nil {
+	if emap, err := GetMap(LL_DP_PKT_PERF_RING).loadMap(`pkt_ring`); err == nil {
 		emap.has_pb = false
 		emap.max_entries = 128 /* MAX_CPUS */
 	}
 
-	if emap, err := GetMap(consts.LL_DP_SESS4_MAP).loadMap(`sess_v4_map`); err == nil {
+	if emap, err := GetMap(LL_DP_SESS4_MAP).loadMap(`sess_v4_map`); err == nil {
 		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_SESS4_STATS_MAP
+		emap.pb_xtid = LL_DP_SESS4_STATS_MAP
 	}
 
-	if emap, err := GetMap(consts.LL_DP_SESS4_STATS_MAP).loadMap(`sess_v4_stats_map`); err == nil {
-		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
-	}
-
-	if emap, err := GetMap(consts.LL_DP_FW4_MAP).loadMap(`fw_v4_map`); err == nil {
-		emap.has_pb = true
-		emap.pb_xtid = consts.LL_DP_FW4_STATS_MAP
-	}
-
-	if emap, err := GetMap(consts.LL_DP_FW4_STATS_MAP).loadMap(`fw_v4_stats_map`); err == nil {
+	if emap, err := GetMap(LL_DP_SESS4_STATS_MAP).loadMap(`sess_v4_stats_map`); err == nil {
 		emap.has_pb = true
 		emap.pbs = make([]maps.PbcStats, emap.max_entries)
 	}
 
-	if emap, err := GetMap(consts.LL_DP_CRC32C_MAP).loadMap(`crc32c_map`); err == nil {
+	if emap, err := GetMap(LL_DP_FW4_MAP).loadMap(`fw_v4_map`); err == nil {
+		emap.has_pb = true
+		emap.pb_xtid = LL_DP_FW4_STATS_MAP
+	}
+
+	if emap, err := GetMap(LL_DP_FW4_STATS_MAP).loadMap(`fw_v4_stats_map`); err == nil {
+		emap.has_pb = true
+		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+	}
+
+	if emap, err := GetMap(LL_DP_CRC32C_MAP).loadMap(`crc32c_map`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_CTCTR_MAP).loadMap(`ct_ctr`); err == nil {
+	if emap, err := GetMap(LL_DP_CTCTR_MAP).loadMap(`ct_ctr`); err == nil {
 		emap.has_pb = false
 		emap.max_entries = 1
 	}
 
-	if emap, err := GetMap(consts.LL_DP_CPU_MAP).loadMap(`cpu_map`); err == nil {
+	if emap, err := GetMap(LL_DP_CPU_MAP).loadMap(`cpu_map`); err == nil {
 		emap.has_pb = false
 		emap.max_entries = 128
 	}
 
-	if emap, err := GetMap(consts.LL_DP_LCPU_MAP).loadMap(`live_cpu_map`); err == nil {
+	if emap, err := GetMap(LL_DP_LCPU_MAP).loadMap(`live_cpu_map`); err == nil {
 		emap.has_pb = false
 		emap.max_entries = 128
 	}
 
-	if emap, err := GetMap(consts.LL_DP_XFIS_MAP).loadMap(`xfis`); err == nil {
+	if emap, err := GetMap(LL_DP_XFIS_MAP).loadMap(`xfis`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_PKTS_MAP).loadMap(`pkts`); err == nil {
+	if emap, err := GetMap(LL_DP_PKTS_MAP).loadMap(`pkts`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_FCAS_MAP).loadMap(`fcas`); err == nil {
+	if emap, err := GetMap(LL_DP_FCAS_MAP).loadMap(`fcas`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_XFCK_MAP).loadMap(`xfck`); err == nil {
+	if emap, err := GetMap(LL_DP_XFCK_MAP).loadMap(`xfck`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_XCTK_MAP).loadMap(`xctk`); err == nil {
+	if emap, err := GetMap(LL_DP_XCTK_MAP).loadMap(`xctk`); err == nil {
 		emap.has_pb = false
 	}
 
-	if emap, err := GetMap(consts.LL_DP_GPARSER_MAP).loadMap(`gparser`); err == nil {
+	if emap, err := GetMap(LL_DP_GPARSER_MAP).loadMap(`gparser`); err == nil {
 		emap.has_pb = false
 	}
 
 	setupCrc32cMap()
-	setupCtCtrMap(config.NodeNo)
+	setupCtCtrMap(nodeNo)
 	setupCpuMap()
 	setupLiveCpuMap()
 	setupUfw4PdiMap()
@@ -292,7 +290,7 @@ func llb_del_map_elem(tbl int, k interface{}) error {
 }
 
 func llb_add_map_elem(tbl int, k, v interface{}) error {
-	if tbl < 0 || tbl >= consts.LL_DP_MAX_MAP {
+	if tbl < 0 || tbl >= LL_DP_MAX_MAP {
 		return fmt.Errorf(`invalid ebpf map index: %d`, tbl)
 	}
 
@@ -336,13 +334,13 @@ func llb_clear_map_stats(tid int, idx uint32) {
 }
 
 func llb_clear_map_stats_internal(tid int, idx uint32, wipe bool) {
-	if tid < 0 || tid >= consts.LL_DP_MAX_MAP {
+	if tid < 0 || tid >= LL_DP_MAX_MAP {
 		return
 	}
 	t := xh.maps[tid]
 	if t.has_pb {
 		if t.pb_xtid > 0 {
-			if t.pb_xtid >= consts.LL_DP_MAX_MAP {
+			if t.pb_xtid >= LL_DP_MAX_MAP {
 				return
 			}
 
@@ -421,17 +419,17 @@ func setupCrc32cMap() {
 				crc = crc >> 1
 			}
 		}
-		xh.maps[consts.LL_DP_CRC32C_MAP].emap.Update(&i, &crc, ebpf.UpdateAny)
+		xh.maps[LL_DP_CRC32C_MAP].emap.Update(&i, &crc, ebpf.UpdateAny)
 	}
 }
 
 func setupCtCtrMap(nodeNo uint32) {
 	key := ctctr.Key(0)
 	ctr := new(ctctr.Act)
-	ctr.Start = uint32(config.FLB_CT_MAP_ENTRIES/config.FLB_MAX_LB_NODES) * nodeNo
+	ctr.Start = uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES) * nodeNo
 	ctr.Counter = ctr.Start
-	ctr.Entries = ctr.Start + uint32(config.FLB_CT_MAP_ENTRIES/config.FLB_MAX_LB_NODES)
-	xh.maps[consts.LL_DP_CTCTR_MAP].emap.Update(&key, ctr, ebpf.UpdateAny)
+	ctr.Entries = ctr.Start + uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
+	xh.maps[LL_DP_CTCTR_MAP].emap.Update(&key, ctr, ebpf.UpdateAny)
 }
 
 func setupCpuMap() {
@@ -439,8 +437,8 @@ func setupCpuMap() {
 		val := cpu.Value(2048)
 		for i := 0; i < possibleCpus; i++ {
 			key := cpu.Key(i)
-			xh.maps[consts.LL_DP_CPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
-			xh.maps[consts.LL_DP_CPU_MAP].max_entries = uint32(possibleCpus)
+			xh.maps[LL_DP_CPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
+			xh.maps[LL_DP_CPU_MAP].max_entries = uint32(possibleCpus)
 		}
 	} else {
 		fmt.Println(err.Error())
@@ -451,7 +449,7 @@ func setupLiveCpuMap() {
 	if liveCpus, err := internal.PossibleCPUs(); err == nil {
 		key := cpu.Key(0)
 		val := cpu.Value(liveCpus)
-		xh.maps[consts.LL_DP_LCPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
+		xh.maps[LL_DP_LCPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
 	} else {
 		fmt.Println(err.Error())
 	}
