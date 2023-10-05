@@ -1,5 +1,6 @@
 package datapath
 
+import "C"
 import (
 	"fmt"
 	"sync"
@@ -423,9 +424,9 @@ func setupCrc32cMap() {
 func setupCtCtrMap(nodeNo uint32) {
 	key := uint32(0)
 	ctr := new(dp_ct_ctrtact)
-	ctr.start = uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES) * nodeNo
+	ctr.start = C.uint(FLB_CT_MAP_ENTRIES / FLB_MAX_LB_NODES * nodeNo)
 	ctr.counter = ctr.start
-	ctr.entries = ctr.start + uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
+	ctr.entries = ctr.start + C.uint(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
 	xh.maps[LL_DP_CTCTR_MAP].emap.Update(&key, ctr, ebpf.UpdateAny)
 }
 
