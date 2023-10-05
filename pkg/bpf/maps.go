@@ -3,7 +3,6 @@ package bpf
 import (
 	"encoding/json"
 	"fmt"
-	"unsafe"
 
 	"github.com/cilium/ebpf"
 )
@@ -52,8 +51,9 @@ func ShowMap(mapName string, key, value interface{}) {
 			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", string(valueBytes))
 		}
 	} else {
-		key = unsafe.ArbitraryType(0)
-		for pinMap.NextKey(&key, &key) == nil {
+		info, _ := pinMap.Info()
+		key = make([]byte, info.KeySize)
+		for pinMap.NextKey(key, key) == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")
 			valueBytes, _ := pinMap.LookupBytes(key)
 			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", valueBytes)
