@@ -51,8 +51,8 @@ func unloadEBpf() {
 
 func removeEBpfMaps() {
 	folders := []string{
-		dp.FLB_DB_MAP_PDIR,
-		fmt.Sprintf(`%s/tc/globals`, dp.FLB_DB_MAP_PDIR),
+		bpf.FLB_DB_MAP_PDIR,
+		fmt.Sprintf(`%s/tc/globals`, bpf.FLB_DB_MAP_PDIR),
 	}
 
 	for _, folder := range folders {

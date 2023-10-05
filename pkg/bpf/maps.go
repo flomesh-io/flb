@@ -5,12 +5,10 @@ import (
 	"fmt"
 
 	"github.com/cilium/ebpf"
-
-	dp "github.com/flomesh-io/flb/pkg/datapath"
 )
 
 func LoadMap(mapName string) (*ebpf.Map, error) {
-	pinFile := fmt.Sprintf("%s/%s", dp.FLB_DB_MAP_PDIR, mapName)
+	pinFile := fmt.Sprintf("%s/%s", FLB_DB_MAP_PDIR, mapName)
 	opts := new(ebpf.LoadPinOptions)
 	return ebpf.LoadPinnedMap(pinFile, opts)
 }
