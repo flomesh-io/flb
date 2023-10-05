@@ -3,6 +3,7 @@ package datapath
 import (
 	"fmt"
 	"sync"
+	"unsafe"
 
 	"github.com/cilium/ebpf"
 
@@ -299,36 +300,30 @@ func llb_add_map_elem(tbl int, k, v interface{}) error {
 	defer XH_UNLOCK()
 
 	/* Any table which has stats pb needs to get stats cleared before use */
-	if tbl == consts.LL_DP_NAT_MAP ||
-		tbl == consts.LL_DP_TMAC_MAP ||
-		tbl == consts.LL_DP_FW4_MAP ||
-		tbl == consts.LL_DP_RTV4_MAP {
-		//cidx := uint32(0)
+	if tbl == LL_DP_NAT_MAP ||
+		tbl == LL_DP_TMAC_MAP ||
+		tbl == LL_DP_FW4_MAP ||
+		tbl == LL_DP_RTV4_MAP {
+		cidx := uint32(0)
 
-		if tbl == consts.LL_DP_FW4_MAP {
-			//struct dp_fwv4_ent *e = k;
-			//	cidx = e->fwa.ca.cidx;
+		if tbl == LL_DP_FW4_MAP {
+			e := (*dp_fwv4_ent)(k.(unsafe.Pointer))
+			cidx = uint32(e.fwa.ca.cidx)
 		} else {
-			//rv := reflect.Indirect(reflect.ValueOf(v))
-			//field := rv.FieldByName(`Ca`)
-			//if field.CanAddr() {
-			//	fv := field.Addr().Interface()
-			//	if ca, ok := fv.(*maps.CmnAct); ok {
-			//		cidx = ca.CIdx
-			//	}
-			//}
-			//llb_clear_map_stats(tbl, cidx)
+			ca := (*dp_cmn_act)(v.(unsafe.Pointer))
+			cidx = uint32(ca.cidx)
 		}
+		llb_clear_map_stats(tbl, cidx)
 	}
 
-	if tbl == consts.LL_DP_FW4_MAP {
+	if tbl == LL_DP_FW4_MAP {
 		//ret = llb_add_mf_map_elem__(tbl, k, v)
 	} else {
 		if err := xh.maps[tbl].emap.Update(k, v, ebpf.UpdateAny); err != nil {
 			return err
 		}
 		/* Need some post-processing for certain maps */
-		if tbl == consts.LL_DP_NAT_MAP {
+		if tbl == LL_DP_NAT_MAP {
 			llb_add_map_elem_nat_post_proc(k, v)
 		}
 	}

@@ -31,10 +31,11 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 	key.tunnel_id = C.uint(w.TunID)
 
 	if w.Work == DpCreate {
-		dat := new(dp_cmn_act)
+		dat := new(dp_tmac_tact)
+		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_dmac_tact)
 		if w.TunID != 0 {
 			if w.NhNum == 0 {
-				dat.act_type = DP_SET_RM_VXLAN
+				dat.ca.act_type = DP_SET_RM_VXLAN
 				rtNhAct := (*dp_rt_nh_act)(getPtrOffset(unsafe.Pointer(dat),
 					sizeof_struct_dp_cmn_act))
 				C.memset(unsafe.Pointer(rtNhAct), 0, sizeof_struct_dp_rt_nh_act)
@@ -45,7 +46,7 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 				/* No need for tunnel ID in case of Access side */
 				key.tunnel_id = 0
 				key.tun_type = 0
-				dat.act_type = DP_SET_RT_TUN_NH
+				dat.ca.act_type = DP_SET_RT_TUN_NH
 				rtNhAct := (*dp_rt_nh_act)(getPtrOffset(unsafe.Pointer(dat),
 					sizeof_struct_dp_cmn_act))
 				C.memset(unsafe.Pointer(rtNhAct), 0, sizeof_struct_dp_rt_nh_act)
@@ -55,7 +56,7 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 				rtNhAct.tid = C.uint(tk.Htonl(tid))
 			}
 		} else {
-			dat.act_type = DP_SET_L3_EN
+			dat.ca.act_type = DP_SET_L3_EN
 		}
 
 		hwAddr := net.HardwareAddr(w.L2Addr[:])

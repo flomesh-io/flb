@@ -6,6 +6,7 @@ package datapath
 */
 import "C"
 import (
+	"fmt"
 	"net"
 	"unsafe"
 
@@ -113,9 +114,11 @@ func DpNatLbRuleMod(w *NatDpWorkQ) int {
 
 		if sErr != nil {
 			tk.LogIt(tk.LogDebug, "[DP] LB rule %s add[NOK] error: %s\n", w.ServiceIP.String(), sErr.Error())
+			fmt.Printf("[DP] LB rule %s add[NOK] error: %s\n", w.ServiceIP.String(), sErr.Error())
 			return EbpfErrTmacAdd
 		}
 		tk.LogIt(tk.LogDebug, "[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
+		fmt.Printf("[DP] LB rule %s add[OK]\n", w.ServiceIP.String())
 		return 0
 	} else if w.Work == DpRemove {
 		llb_del_map_elem(LL_DP_NAT_MAP, unsafe.Pointer(key))
