@@ -10,8 +10,6 @@ import (
 	"github.com/flomesh-io/flb/internal"
 	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/maps"
-	"github.com/flomesh-io/flb/pkg/maps/cpu"
-	"github.com/flomesh-io/flb/pkg/maps/ctctr"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
 
@@ -424,19 +422,19 @@ func setupCrc32cMap() {
 }
 
 func setupCtCtrMap(nodeNo uint32) {
-	key := ctctr.Key(0)
-	ctr := new(ctctr.Act)
-	ctr.Start = uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES) * nodeNo
-	ctr.Counter = ctr.Start
-	ctr.Entries = ctr.Start + uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
+	key := uint32(0)
+	ctr := new(dp_ct_ctrtact)
+	ctr.start = uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES) * nodeNo
+	ctr.counter = ctr.start
+	ctr.entries = ctr.start + uint32(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
 	xh.maps[LL_DP_CTCTR_MAP].emap.Update(&key, ctr, ebpf.UpdateAny)
 }
 
 func setupCpuMap() {
 	if possibleCpus, err := internal.PossibleCPUs(); err == nil {
-		val := cpu.Value(2048)
+		val := uint32(2048)
 		for i := 0; i < possibleCpus; i++ {
-			key := cpu.Key(i)
+			key := uint32(i)
 			xh.maps[LL_DP_CPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
 			xh.maps[LL_DP_CPU_MAP].max_entries = uint32(possibleCpus)
 		}
@@ -447,8 +445,8 @@ func setupCpuMap() {
 
 func setupLiveCpuMap() {
 	if liveCpus, err := internal.PossibleCPUs(); err == nil {
-		key := cpu.Key(0)
-		val := cpu.Value(liveCpus)
+		key := uint32(0)
+		val := uint32(liveCpus)
 		xh.maps[LL_DP_LCPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
 	} else {
 		fmt.Println(err.Error())

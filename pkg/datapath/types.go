@@ -89,6 +89,7 @@ type (
 	dp_mirr_tact         C.struct_dp_mirr_tact
 	dp_fwv4_ent          C.struct_dp_fwv4_ent
 	dp_rdr_act           C.struct_dp_rdr_act
+	dp_ct_ctrtact        C.struct_dp_ct_ctrtact
 	dp_map_notif         C.struct_ll_dp_map_notif
 )
 
@@ -122,6 +123,7 @@ const (
 	sizeof_struct_dp_mirr_tact         = C.sizeof_struct_dp_mirr_tact
 	sizeof_struct_dp_fwv4_ent          = C.sizeof_struct_dp_fwv4_ent
 	sizeof_struct_dp_rdr_act           = C.sizeof_struct_dp_rdr_act
+	sizeof_struct_dp_ct_ctrtact        = C.sizeof_struct_dp_ct_ctrtact
 	sizeof_struct_ll_dp_map_notif      = C.sizeof_struct_ll_dp_map_notif
 	sizeof_struct_bpf_lpm_trie_key     = 0x4
 	sizeof_struct_bpf_spin_lock        = 0x4
