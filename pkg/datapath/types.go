@@ -19,7 +19,13 @@ package datapath
 #cgo CFLAGS:  -I./../../ebpf/headers/linux -I./../../ebpf/common
 */
 import "C"
-import "unsafe"
+import (
+	"fmt"
+	"sync"
+	"unsafe"
+
+	"github.com/flomesh-io/flb/pkg/consts"
+)
 
 const (
 	FLB_MGMT_CHANNEL = C.FLB_MGMT_CHANNEL
@@ -279,12 +285,27 @@ const (
 	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
 )
 
-func AA() {
-	var add_opt pdi_add_map_op_t
-	var del_opt pdi_del_map_op_t
-	pdiMap := C.pdi_map_alloc(C.CString("aa"), add_opt, del_opt)
+type dp struct {
+	lock   sync.RWMutex
+	mplock sync.Mutex
+	maps   [consts.LL_DP_MAX_MAP]*DpMap
+	ufw4   *C.struct_pdi_map
+	ufw6   *C.struct_pdi_map
+}
 
-	pdiRule := new(pdi_rule)
+func AA() {
+	var pdiMap = C.pdi_map_alloc(C.CString("aa"), nil, nil)
+
+	pdiKey := new(C.struct_pdi_key)
+	pdiRule := new(C.struct_pdi_rule)
+	pdiRule.key.dest.val = 111
 	nr := C.int(1)
-	C.pdi_rule_insert(pdiMap, pdiRule, &nr)
+	ret := C.pdi_rule_insert(pdiMap, pdiRule, &nr)
+	fmt.Println(ret)
+	ret = C.pdi_rule_insert(pdiMap, pdiRule, &nr)
+	fmt.Println(ret)
+	C.flb_dp_pdik2_ufw4(pdiRule, pdiKey)
+	fmt.Printf("%v\n", pdiKey.dest)
+	ok := (*pdi_map)(unsafe.Pointer(pdiMap))
+	fmt.Printf("{%s}\n", C.GoString((*C.char)(&ok.name[0])))
 }

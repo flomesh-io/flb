@@ -52,12 +52,6 @@ var (
 	xh *dp
 )
 
-type dp struct {
-	lock   sync.RWMutex
-	mplock sync.Mutex
-	maps   [consts.LL_DP_MAX_MAP]*DpMap
-}
-
 func XH_LOCK() {
 	xh.lock.Lock()
 }
