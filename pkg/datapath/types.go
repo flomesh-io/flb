@@ -20,7 +20,6 @@ package datapath
 */
 import "C"
 import (
-	"fmt"
 	"sync"
 	"unsafe"
 
@@ -294,18 +293,18 @@ type dp struct {
 }
 
 func AA() {
-	var pdiMap = C.pdi_map_alloc(C.CString("aa"), nil, nil)
-
-	pdiKey := new(C.struct_pdi_key)
-	pdiRule := new(C.struct_pdi_rule)
-	pdiRule.key.dest.val = 111
-	nr := C.int(1)
-	ret := C.pdi_rule_insert(pdiMap, pdiRule, &nr)
-	fmt.Println(ret)
-	ret = C.pdi_rule_insert(pdiMap, pdiRule, &nr)
-	fmt.Println(ret)
-	C.flb_dp_pdik2_ufw4(pdiRule, pdiKey)
-	fmt.Printf("%v\n", pdiKey.dest)
-	ok := (*pdi_map)(unsafe.Pointer(pdiMap))
-	fmt.Printf("{%s}\n", C.GoString((*C.char)(&ok.name[0])))
+	//var pdiMap = C.pdi_map_alloc(C.CString("aa"), nil, nil)
+	//
+	//pdiKey := new(C.struct_pdi_key)
+	//pdiRule := new(C.struct_pdi_rule)
+	//pdiRule.key.dest.val = 111
+	//nr := C.int(1)
+	//ret := C.pdi_rule_insert(pdiMap, pdiRule, &nr)
+	//fmt.Println(ret)
+	//ret = C.pdi_rule_insert(pdiMap, pdiRule, &nr)
+	//fmt.Println(ret)
+	//C.flb_dp_pdik2_ufw4(pdiRule, pdiKey)
+	//fmt.Printf("%v\n", pdiKey.dest)
+	//ok := (*pdi_map)(unsafe.Pointer(pdiMap))
+	//fmt.Printf("{%s}\n", C.GoString((*C.char)(&ok.name[0])))
 }
