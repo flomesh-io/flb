@@ -54,6 +54,10 @@ func main() {
 	go restfullCliServer(nDp.ToDpCh)
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)
 
+	go func() {
+		bpf.ShowMap("rt_v4_map", nil, nil)
+	}()
+
 	go flbTicker()
 	wg.Wait()
 }
