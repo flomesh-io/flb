@@ -9,7 +9,6 @@ import (
 
 	"github.com/flomesh-io/flb/internal"
 	"github.com/flomesh-io/flb/pkg/bpf"
-	"github.com/flomesh-io/flb/pkg/maps"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
 
@@ -20,7 +19,7 @@ type DpMap struct {
 	emap        *ebpf.Map
 	has_pb      bool
 	pb_xtid     int
-	pbs         []maps.PbcStats
+	pbs         []PbcStats
 	has_pol     int
 	//struct dp_pol_stats *pls;
 	stat_lock sync.Mutex
@@ -102,12 +101,12 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_INTF_STATS_MAP).loadMap(`intf_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_BD_STATS_MAP).loadMap(`bd_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_SMAC_MAP).loadMap(`smac_map`); err == nil {
@@ -121,7 +120,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_TMAC_STATS_MAP).loadMap(`tmac_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_CT_MAP).loadMap(`ct_map`); err == nil {
@@ -130,7 +129,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_CT_STATS_MAP).loadMap(`ct_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_RTV4_MAP).loadMap(`rt_v4_map`); err == nil {
@@ -140,7 +139,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_RTV4_STATS_MAP).loadMap(`rt_v4_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_RTV6_MAP).loadMap(`rt_v6_map`); err == nil {
@@ -150,7 +149,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_RTV6_STATS_MAP).loadMap(`rt_v6_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_NH_MAP).loadMap(`nh_map`); err == nil {
@@ -171,12 +170,12 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_TX_INTF_STATS_MAP).loadMap(`tx_intf_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_TX_BD_STATS_MAP).loadMap(`tx_bd_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_FCV4_MAP).loadMap(`fc_v4_map`); err == nil {
@@ -185,7 +184,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_FCV4_STATS_MAP).loadMap(`fc_v4_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_PGM_MAP).loadMap(`pgm_tbl`); err == nil {
@@ -204,7 +203,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_NAT_STATS_MAP).loadMap(`nat_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_PKT_PERF_RING).loadMap(`pkt_ring`); err == nil {
@@ -219,7 +218,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_SESS4_STATS_MAP).loadMap(`sess_v4_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_FW4_MAP).loadMap(`fw_v4_map`); err == nil {
@@ -229,7 +228,7 @@ func DpInit(nodeNo uint32) {
 
 	if emap, err := GetMap(LL_DP_FW4_STATS_MAP).loadMap(`fw_v4_stats_map`); err == nil {
 		emap.has_pb = true
-		emap.pbs = make([]maps.PbcStats, emap.max_entries)
+		emap.pbs = make([]PbcStats, emap.max_entries)
 	}
 
 	if emap, err := GetMap(LL_DP_CRC32C_MAP).loadMap(`crc32c_map`); err == nil {
@@ -360,7 +359,7 @@ func llb_clear_map_stats_internal(tid int, idx uint32, wipe bool) {
 
 func llb_clear_stats_pcpu_arr(pinMap *ebpf.Map, idx uint32) {
 	if nrCpus, err := internal.PossibleCPUs(); err == nil {
-		values := make([]maps.PbStats, nrCpus)
+		values := make([]PbStats, nrCpus)
 		if err = pinMap.Update(&idx, values, ebpf.UpdateAny); err != nil {
 			tk.LogIt(tk.LogError, "bpf_map_lookup_elem failed, error:%s\n", err.Error())
 		}

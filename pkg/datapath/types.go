@@ -284,6 +284,21 @@ const (
 	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
 )
 
+type PbStats struct {
+	Bytes   uint64
+	Packets uint64
+}
+
+type PolStats struct {
+	DropPackets uint64
+	PassPackets uint64
+}
+
+type PbcStats struct {
+	St   PbStats
+	Used bool
+}
+
 type dp struct {
 	lock   sync.RWMutex
 	mplock sync.Mutex
