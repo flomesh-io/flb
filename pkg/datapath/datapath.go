@@ -369,29 +369,47 @@ func llb_clear_stats_pcpu_arr(pinMap *ebpf.Map, idx uint32) {
 	}
 }
 
-func llb_add_map_elem_nat_post_proc(k, v interface{}) {
-	//TODO benne
-	//struct dp_nat_tacts *na = v;
-	//struct mf_xfrm_inf *ep_arm;
-	//uint32_t inact_aids[LLB_MAX_NXFRMS];
-	//int i = 0;
-	//int j = 0;
-	//
-	//memset(inact_aids, 0, sizeof(inact_aids));
-	//
-	//for (i = 0; i < na->nxfrm && i < LLB_MAX_NXFRMS; i++) {
-	//ep_arm = &na->nxfrms[i];
-	//
-	//if (ep_arm->inactive) {
-	//inact_aids[j++] = i;
-	//}
-	//}
-	//
-	//if (j > 0) {
-	//ll_map_ct_rm_related(na->ca.cidx, inact_aids, j);
-	//}
-	//
-	//return 0;
+func llb_add_map_elem_nat_post_proc(k, v interface{}) int {
+	na := (*dp_nat_tacts)(v.(unsafe.Pointer))
+	var ep_arm *dp_mf_xfrm_inf
+	inact_aids := make([]uint16, FLB_MAX_NXFRMS)
+	j := 0
+	for i := 0; i < int(na.nxfrm) && i < FLB_MAX_NXFRMS; i++ {
+		ep_arm = (*dp_mf_xfrm_inf)(unsafe.Pointer(&na.nxfrms[i]))
+		if ep_arm.inactive == 1 {
+			inact_aids[j] = uint16(i)
+			j++
+		}
+	}
+
+	if j > 0 {
+		ll_map_ct_rm_related(uint32(na.ca.cidx), inact_aids, j)
+	}
+
+	return 0
+}
+
+func llb_del_map_elem_nat_post_proc(k, v interface{}) int {
+	na := (*dp_nat_tacts)(v.(unsafe.Pointer))
+	var ep_arm *dp_mf_xfrm_inf
+	inact_aids := make([]uint16, FLB_MAX_NXFRMS)
+	j := 0
+	for i := 0; i < int(na.nxfrm) && i < FLB_MAX_NXFRMS; i++ {
+		ep_arm = (*dp_mf_xfrm_inf)(unsafe.Pointer(&na.nxfrms[i]))
+		if ep_arm.inactive == 0 {
+			inact_aids[j] = uint16(i)
+			j++
+		}
+	}
+
+	if j > 0 {
+		ll_map_ct_rm_related(uint32(na.ca.cidx), inact_aids, j)
+	}
+
+	return 0
+}
+
+func ll_map_ct_rm_related(rid uint32, aids []uint16, naid int) {
 
 }
 
