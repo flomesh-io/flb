@@ -49,7 +49,7 @@ func main() {
 	nodeNo := uint32(0)
 	loadAttachEBpf(nodeNo)
 
-	dp.FlbInit()
+	dp.FLBInit()
 	dpH := new(DpEbpfH)
 	nDp := lbnet.DpBrokerInit(dpH)
 

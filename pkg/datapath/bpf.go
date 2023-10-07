@@ -150,6 +150,12 @@ static void flb_dp_ufw42_pdiop(struct pdi_rule *new, struct dp_fwv4_ent *e)
 // typedef unsigned long long __u64;
 // #endif
 
+// flags for BPF_MAP_UPDATE_ELEM command
+#define BPF_ANY		  0 // create new element or update existing
+#define BPF_NOEXIST	1 // create new element if it didn't exist
+#define BPF_EXIST	  2 // update existing element
+#define BPF_F_LOCK	4 // spin_lock-ed map_lookup/map_update
+
 enum bpf_cmd {
 	BPF_MAP_CREATE,
 	BPF_MAP_LOOKUP_ELEM,
@@ -1529,6 +1535,63 @@ void flb_xh_unlock(void)
 
 //-------------------------------- dpapi 函数 实现 结束------------------------------------------
 
+static void flb_setup_crc32c_map(int mapfd)
+{
+  int i;
+  uint32_t crc;
+
+  // Generate crc32c table
+  for (i = 0; i < 256; i++) {
+    crc = i;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
+    bpf_map_update_elem(mapfd, &i, &crc, BPF_ANY);
+  }
+}
+
+static void flb_setup_ctctr_map(int mapfd)
+{
+  uint32_t k = 0;
+  struct dp_ct_ctrtact ctr;
+
+  memset(&ctr, 0, sizeof(ctr));
+  ctr.start = (FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES) * xh->nodenum;
+  ctr.counter = ctr.start;
+  ctr.entries = ctr.start + (FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES);
+  bpf_map_update_elem(mapfd, &k, &ctr, BPF_ANY);
+}
+
+static void flb_setup_cpu_map(int mapfd)
+{
+  uint32_t qsz = 2048;
+  unsigned int live_cpus = bpf_num_possible_cpus();
+  int ret, i;
+
+  for (i = 0; i < live_cpus; i++) {
+    ret = bpf_map_update_elem(mapfd, &i, &qsz, BPF_ANY);
+    if (ret < 0) {
+      printf("Failed to update cpu-map %d ent", i);
+    }
+  }
+}
+
+static void flb_setup_lcpu_map(int mapfd)
+{
+  unsigned int live_cpus = bpf_num_online_cpus();
+  int ret, i;
+  i = 0;
+  ret = bpf_map_update_elem(mapfd, &i, &live_cpus, BPF_ANY);
+  if (ret < 0) {
+    printf("Failed to update live cpu-map %d ent", i);
+  }
+}
+
 static void flb_xh_init(flb_dp_struct_t *xh)
 {
   xh->ll_dp_fname = FLB_FP_IMG_DEFAULT;
@@ -1693,11 +1756,11 @@ static void flb_xh_init(flb_dp_struct_t *xh)
 
   xh->maps[LL_DP_CPU_MAP].map_name = "cpu_map";
   xh->maps[LL_DP_CPU_MAP].has_pb   = 0;
-  xh->maps[LL_DP_CPU_MAP].max_entries = 128;
+  xh->maps[LL_DP_CPU_MAP].max_entries = bpf_num_possible_cpus();
 
   xh->maps[LL_DP_LCPU_MAP].map_name = "live_cpu_map";
   xh->maps[LL_DP_LCPU_MAP].has_pb   = 0;
-  xh->maps[LL_DP_LCPU_MAP].max_entries = 128;
+  xh->maps[LL_DP_LCPU_MAP].max_entries = bpf_num_online_cpus();
 
   xh->maps[LL_DP_XFIS_MAP].map_name = "xfis";
   xh->maps[LL_DP_XFIS_MAP].has_pb   = 0;
@@ -1732,6 +1795,11 @@ static void flb_xh_init(flb_dp_struct_t *xh)
 
   xh->ufw4 = pdi_map_alloc("ufw4", NULL, NULL);
   xh->ufw6 = pdi_map_alloc("ufw6", NULL, NULL);
+
+  flb_setup_crc32c_map(flb_map2fd(LL_DP_CRC32C_MAP));
+  flb_setup_ctctr_map(flb_map2fd(LL_DP_CTCTR_MAP));
+  flb_setup_cpu_map(flb_map2fd(LL_DP_CPU_MAP));
+  flb_setup_lcpu_map(flb_map2fd(LL_DP_LCPU_MAP));
 
   return;
 }
@@ -1906,7 +1974,7 @@ func RemoveEBpfMaps() {
 	}
 }
 
-func FlbInit() {
+func FLBInit() {
 	C.flb_init(nil)
 }
 
