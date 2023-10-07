@@ -7,7 +7,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
@@ -38,11 +37,6 @@ const (
 
 func main() {
 	wg.Add(1)
-
-	if success := bpf.SetResourceLimit(); !success {
-		tk.LogIt(tk.LogCritical, `Failed to increase RLIMIT_MEMLOCK limit!`)
-		os.Exit(-1)
-	}
 
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGCHLD, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
 
