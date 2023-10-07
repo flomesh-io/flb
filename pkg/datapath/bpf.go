@@ -1982,6 +1982,10 @@ func flb_del_map_elem(tbl int, k unsafe.Pointer) int {
 	return int(C.flb_del_map_elem(C.int(tbl), k))
 }
 
+func flb_clear_map_stats(tid int, idx uint32) {
+	C.flb_clear_map_stats(C.int(tid), C.uint(idx))
+}
+
 func FLBInit() {
 	C.flb_init(nil)
 }
