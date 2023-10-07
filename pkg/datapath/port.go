@@ -56,20 +56,19 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 			setIfi.pprop = FLB_DP_PORT_UPP
 		}
 
-		sErr := llb_add_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key), unsafe.Pointer(data))
-
-		if sErr != nil {
-			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error: %s\n", w.OsPortNum, w.IngVlan, sErr.Error())
+		ret := flb_add_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key), unsafe.Pointer(data))
+		if ret != 0 {
+			tk.LogIt(tk.LogError, "ebpf intfmap - %d vlan %d error: %d\n", w.OsPortNum, w.IngVlan, ret)
 			return EbpfErrPortPropAdd
 		}
 
 		tk.LogIt(tk.LogDebug, "ebpf intfmap added - %d vlan %d -> %d\n", w.OsPortNum, w.IngVlan, w.PortNum)
 
 		txV = C.uint(w.OsPortNum)
-		sErr = llb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
-		if sErr != nil {
-			llb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
-			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error: %s\n", w.OsPortNum, sErr.Error())
+		ret = flb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
+		if ret != 0 {
+			flb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
+			tk.LogIt(tk.LogError, "ebpf txintfmap - %d error: %d\n", w.OsPortNum, ret)
 			return EbpfErrPortPropAdd
 		}
 		tk.LogIt(tk.LogDebug, "ebpf txintfmap added - %d -> %d\n", w.PortNum, w.OsPortNum)
@@ -79,10 +78,8 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 		// TX_INTF_MAP is array type so we can't delete it
 		// Rather we need to zero it out first
 		txV = C.uint(0)
-		llb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
-		llb_del_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK))
-
-		llb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
+		flb_add_map_elem(LL_DP_TX_INTF_MAP, unsafe.Pointer(&txK), unsafe.Pointer(&txV))
+		flb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
 
 		if w.LoadEbpf != "" {
 			lRet := DetachTcProg(w.LoadEbpf)

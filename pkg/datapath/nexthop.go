@@ -60,11 +60,9 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 
 		srcHwAddr := net.HardwareAddr(w.SrcAddr[:])
 		dstHwAddr := net.HardwareAddr(w.DstAddr[:])
-		sErr := flb_add_map_elem(LL_DP_NH_MAP,
-			unsafe.Pointer(key),
-			unsafe.Pointer(dat))
-		if sErr != 0 {
-			fmt.Printf("[DP] Nexthop %5d %s %s add[NOK] %d\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String(), sErr)
+		ret := flb_add_map_elem(LL_DP_NH_MAP, unsafe.Pointer(key), unsafe.Pointer(dat))
+		if ret != 0 {
+			fmt.Printf("[DP] Nexthop %5d %s %s add[NOK] error: %d\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String(), ret)
 			return EbpfErrNhAdd
 		}
 		fmt.Printf("[DP] Nexthop %5d %s %s add[OK]\n", w.NextHopNum, srcHwAddr.String(), dstHwAddr.String())
@@ -73,9 +71,7 @@ func DpNextHopMod(w *NextHopDpWorkQ) int {
 		dat := new(dp_nh_tact)
 		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_nh_tact)
 		// eBPF array elements cant be deleted. Instead we just reset it
-		flb_add_map_elem(LL_DP_NH_MAP,
-			unsafe.Pointer(key),
-			unsafe.Pointer(dat))
+		flb_add_map_elem(LL_DP_NH_MAP, unsafe.Pointer(key), unsafe.Pointer(dat))
 		return 0
 	}
 

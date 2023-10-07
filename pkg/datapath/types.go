@@ -305,15 +305,3 @@ type dp struct {
 	ufw4   *C.struct_pdi_map
 	ufw6   *C.struct_pdi_map
 }
-
-func setupUfw4PdiMap() {
-	fwName := C.CString("ufw4")
-	xh.ufw4 = C.pdi_map_alloc(fwName, nil, nil)
-	C.free(unsafe.Pointer(fwName))
-}
-
-func setupUfw6PdiMap() {
-	fwName := C.CString("ufw6")
-	xh.ufw4 = C.pdi_map_alloc(fwName, nil, nil)
-	C.free(unsafe.Pointer(fwName))
-}

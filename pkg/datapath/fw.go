@@ -96,15 +96,15 @@ func DpFwRuleMod(w *FwDpWorkQ) int {
 		if w.FwRecord {
 			fwe.fwa.ca.record = C.ushort(1)
 		}
-		sErr := llb_add_map_elem(LL_DP_FW4_MAP, unsafe.Pointer(fwe), unsafe.Pointer(nil))
-		if sErr != nil {
-			fmt.Printf("[DP] FW %d add[NOK] error: %s\n", w.Mark, sErr.Error())
+		ret := flb_add_map_elem(LL_DP_FW4_MAP, unsafe.Pointer(fwe), unsafe.Pointer(nil))
+		if ret != 0 {
+			fmt.Printf("[DP] FW %d add[NOK] error: %d\n", w.Mark, ret)
 			tk.LogIt(tk.LogError, "ebpf fw error\n")
 			return EbpfErrFwAdd
 		}
 		fmt.Printf("[DP] FW %d add[OK]\n", w.Mark)
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(LL_DP_FW4_MAP, unsafe.Pointer(fwe))
+		flb_del_map_elem(LL_DP_FW4_MAP, unsafe.Pointer(fwe))
 	}
 
 	return 0

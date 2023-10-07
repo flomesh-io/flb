@@ -44,11 +44,8 @@ func DpPolMod(w *PolDpWorkQ) int {
 		pa.laste_uts = pa.toksc_pus
 		pa.drop_prio = FLB_PIPE_COL_YELLOW
 
-		sErr := llb_add_map_elem(LL_DP_POL_MAP,
-			unsafe.Pointer(&key),
-			unsafe.Pointer(dat))
-
-		if sErr != nil {
+		ret := flb_add_map_elem(LL_DP_POL_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
+		if ret != 0 {
 			*w.Status = 1
 			return EbpfErrPolAdd
 		}
@@ -59,9 +56,7 @@ func DpPolMod(w *PolDpWorkQ) int {
 		// Array map types need to be zeroed out first
 		dat := new(dp_pol_tact)
 		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_pol_tact)
-		llb_add_map_elem(LL_DP_POL_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
-		// This operation is unnecessary
-		llb_del_map_elem(LL_DP_POL_MAP, unsafe.Pointer(&key))
+		flb_add_map_elem(LL_DP_POL_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
 		return 0
 	}
 	return 0

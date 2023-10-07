@@ -30,11 +30,10 @@ func DpMirrMod(w *MirrDpWorkQ) int {
 		la.oport = C.ushort(w.MiPortNum)
 		la.vlan = C.ushort(w.MiBD)
 
-		sErr := llb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
-
-		if sErr != nil {
+		ret := flb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
+		if ret != 0 {
 			*w.Status = 1
-			fmt.Printf("[DP] MIRROR %s %d add[NOK] error: %s\n", w.Name, w.Mark, sErr.Error())
+			fmt.Printf("[DP] MIRROR %s %d add[NOK] error: %d\n", w.Name, w.Mark, ret)
 			return EbpfErrMirrAdd
 		}
 
@@ -44,8 +43,8 @@ func DpMirrMod(w *MirrDpWorkQ) int {
 		// Array map types need to be zeroed out first
 		dat := new(dp_mirr_tact)
 		C.memset(unsafe.Pointer(dat), 0, sizeof_struct_dp_mirr_tact)
-		llb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
-		llb_del_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key))
+		flb_add_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key), unsafe.Pointer(dat))
+		flb_del_map_elem(LL_DP_MIRROR_MAP, unsafe.Pointer(&key))
 		return 0
 	}
 	return 0

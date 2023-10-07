@@ -80,19 +80,17 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 			dat.ca.cidx = C.uint(w.RtMark)
 		}
 
-		sErr := llb_add_map_elem(mapNum,
-			unsafe.Pointer(key),
-			unsafe.Pointer(dat))
-		if sErr != nil {
-			fmt.Printf("[DP] ROUTE %s add[NOK] error: %s\n", w.Dst.String(), sErr.Error())
+		ret := flb_add_map_elem(mapNum, unsafe.Pointer(key), unsafe.Pointer(dat))
+		if ret != 0 {
+			fmt.Printf("[DP] ROUTE %s add[NOK] error: %d\n", w.Dst.String(), ret)
 			return EbpfErrRt4Add
 		}
 		fmt.Printf("[DP] ROUTE %s add[OK] \n", w.Dst.String())
 		return 0
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(mapNum, unsafe.Pointer(key))
+		flb_del_map_elem(mapNum, unsafe.Pointer(key))
 		if w.RtMark > 0 {
-			llb_clear_map_stats(mapSnum, uint32(w.RtMark))
+			flb_clear_map_stats(mapSnum, uint32(w.RtMark))
 		}
 		return 0
 	}

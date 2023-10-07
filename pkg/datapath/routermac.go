@@ -61,19 +61,16 @@ func DpRouterMacMod(w *RouterMacDpWorkQ) int {
 
 		hwAddr := net.HardwareAddr(w.L2Addr[:])
 
-		sErr := llb_add_map_elem(LL_DP_TMAC_MAP,
-			unsafe.Pointer(key),
-			unsafe.Pointer(dat))
-
-		if sErr != nil {
-			fmt.Printf("[DP] TMAC %s add[NOK] error: %s\n", hwAddr.String(), sErr.Error())
+		ret := flb_add_map_elem(LL_DP_TMAC_MAP, unsafe.Pointer(key), unsafe.Pointer(dat))
+		if ret != 0 {
+			fmt.Printf("[DP] TMAC %s add[NOK] error: %d\n", hwAddr.String(), ret)
 			return EbpfErrTmacAdd
 		}
 
 		fmt.Printf("[DP] TMAC %s add[OK]\n", hwAddr.String())
 		return 0
 	} else if w.Work == DpRemove {
-		llb_del_map_elem(LL_DP_TMAC_MAP, unsafe.Pointer(key))
+		flb_del_map_elem(LL_DP_TMAC_MAP, unsafe.Pointer(key))
 	}
 
 	return EbpfErrWqUnk
