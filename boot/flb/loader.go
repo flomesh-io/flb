@@ -10,9 +10,6 @@ import (
 func loadAttachEBpf(nodeNo uint32) {
 	if ret := dp.LinkTapDev(dp.FLB_MGMT_CHANNEL); ret == 0 {
 		dp.LoadXdpProg()
-
-		dp.DpInit(nodeNo)
-
 		dp.AttachXdpProg(dp.FLB_MGMT_CHANNEL)
 		dp.AttachTcProg(dp.FLB_MGMT_CHANNEL)
 	}
