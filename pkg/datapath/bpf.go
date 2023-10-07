@@ -1833,10 +1833,6 @@ import (
 	"github.com/flomesh-io/flb/pkg/tk"
 )
 
-const (
-	FLB_MGMT_CHANNEL = C.FLB_MGMT_CHANNEL
-)
-
 // error codes
 const (
 	EbpfErrBase = iota - 50000
@@ -1865,6 +1861,10 @@ const (
 	EbpfErrCtAdd
 	EbpfErrCtDel
 	EbpfErrWqUnk
+)
+
+const (
+	FLB_MGMT_CHANNEL = C.FLB_MGMT_CHANNEL
 )
 
 // ebpf table related defines in go
@@ -2063,38 +2063,6 @@ const (
 	FLB_PIPE_COL_GREEN  = 1
 	FLB_PIPE_COL_YELLOW = 2
 	FLB_PIPE_COL_RED    = 3
-)
-
-// pdi related defines in go
-type (
-	pdi_gen_key C.struct_pdi_gen_key
-	pdi_opts    C.struct_pdi_opts
-	pdi_data    C.struct_pdi_data
-	pdi_stats   C.struct_pdi_stats
-	pdi_val     C.struct_pdi_val
-	pdi_rule    C.struct_pdi_rule
-	pdi_map     C.struct_pdi_map
-
-	pdi_add_map_op_t C.pdi_add_map_op_t
-	pdi_del_map_op_t C.pdi_del_map_op_t
-)
-
-const (
-	sizeof_struct_pdi_gen_key = C.sizeof_struct_pdi_gen_key
-	sizeof_struct_pdi_opts    = C.sizeof_struct_pdi_opts
-	sizeof_struct_pdi_data    = C.sizeof_struct_pdi_data
-	sizeof_struct_pdi_stats   = C.sizeof_struct_pdi_stats
-	sizeof_struct_pdi_val     = C.sizeof_struct_pdi_val
-	sizeof_struct_pdi_rule    = C.sizeof_struct_pdi_rule
-	sizeof_struct_pdi_map     = C.sizeof_struct_pdi_map
-)
-
-const (
-	/* flags for BPF_MAP_UPDATE_ELEM command */
-	BPF_ANY     = uint64(0) /* create new element or update existing */
-	BPF_NOEXIST = uint64(1) /* create new element if it didn't exist */
-	BPF_EXIST   = uint64(2) /* update existing element */
-	BPF_F_LOCK  = uint64(4) /* spin_lock-ed map_lookup/map_update */
 )
 
 func bpf_map_update_elem(fd int, key, value unsafe.Pointer, flags uint64) int {

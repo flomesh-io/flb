@@ -45,7 +45,7 @@ func DpStat(w *StatDpWorkQ) int {
 
 		for _, t := range tbl {
 
-			ret := flb_fetch_map_stats_cached(t, w.Mark, sync, (unsafe.Pointer(&b)), unsafe.Pointer(&p))
+			ret := flb_fetch_map_stats_cached(t, w.Mark, sync, unsafe.Pointer(&b), unsafe.Pointer(&p))
 			if ret != 0 {
 				return EbpfErrTmacAdd
 			}
@@ -56,7 +56,7 @@ func DpStat(w *StatDpWorkQ) int {
 
 		for _, t := range polTbl {
 
-			ret := flb_fetch_pol_map_stats(t, w.Mark, (unsafe.Pointer(&p)), unsafe.Pointer(&b))
+			ret := flb_fetch_pol_map_stats(t, w.Mark, unsafe.Pointer(&p), unsafe.Pointer(&b))
 			if ret != 0 {
 				return EbpfErrTmacAdd
 			}
@@ -67,13 +67,13 @@ func DpStat(w *StatDpWorkQ) int {
 
 		if packets != 0 || bytes != 0 || dropPackets != 0 {
 			if w.Packets != nil {
-				*w.Packets = uint64(packets)
+				*w.Packets = packets
 			}
 			if w.Bytes != nil {
-				*w.Bytes = uint64(bytes)
+				*w.Bytes = bytes
 			}
 			if w.DropPackets != nil {
-				*w.DropPackets = uint64(dropPackets)
+				*w.DropPackets = dropPackets
 			}
 		}
 	} else if w.Work == DpStatsClr {

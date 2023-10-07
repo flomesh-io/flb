@@ -1,6 +1,6 @@
 package datapath
 
-// DpTakeLock - routine to take underlying DP lock
+// DpGetLock - routine to take underlying DP lock
 func DpGetLock() {
 	flb_xh_lock()
 }
