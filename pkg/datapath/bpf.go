@@ -2246,6 +2246,24 @@ func flb_clear_map_stats(tid int, idx uint32) {
 	C.flb_clear_map_stats(C.int(tid), C.uint(idx))
 }
 
+func flb_fetch_map_stats_cached(tbl int, e uint32, raw int, bytes, packets unsafe.Pointer) int {
+	return int(C.flb_fetch_map_stats_cached(C.int(tbl), C.uint(e), C.int(raw), bytes, packets))
+}
+
+func flb_fetch_pol_map_stats(tid int, e uint32, ppass, pdrop unsafe.Pointer) int {
+	return int(C.flb_fetch_pol_map_stats(C.int(tid), C.uint(e), ppass, pdrop))
+}
+
+// flb_xh_lock - routine to take underlying DP lock
+func flb_xh_lock() {
+	C.flb_xh_lock()
+}
+
+// flb_xh_unlock - routine to release underlying DP lock
+func flb_xh_unlock() {
+	C.flb_xh_unlock()
+}
+
 func FLBInit() {
 	C.flb_init(nil)
 }
