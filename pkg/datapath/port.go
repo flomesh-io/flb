@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
 	"github.com/flomesh-io/flb/pkg/cmn"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
@@ -34,7 +33,7 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 	if w.Work == DpCreate {
 
 		if w.LoadEbpf != "" && w.LoadEbpf != "lo" && w.LoadEbpf != FLB_MGMT_CHANNEL {
-			lRet := bpf.AttachTcProg(w.LoadEbpf)
+			lRet := AttachTcProg(w.LoadEbpf)
 			if lRet != 0 {
 				tk.LogIt(tk.LogError, "ebpf load - %d error\n", w.PortNum)
 				syscall.Exit(1)
@@ -86,7 +85,7 @@ func DpPortPropMod(w *PortDpWorkQ) int {
 		llb_del_map_elem(LL_DP_INTF_MAP, unsafe.Pointer(key))
 
 		if w.LoadEbpf != "" {
-			lRet := bpf.DetachTcProg(w.LoadEbpf)
+			lRet := DetachTcProg(w.LoadEbpf)
 			if lRet != 0 {
 				tk.LogIt(tk.LogError, "ebpf unload - ifi %d error\n", w.OsPortNum)
 				return EbpfErrEbpfLoad

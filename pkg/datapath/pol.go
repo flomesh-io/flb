@@ -2,22 +2,6 @@ package datapath
 
 /*
 #include <string.h>
-#include <time.h>
-
-unsigned long long get_os_usecs(void)
-{
-  struct timespec ts;
-  clock_gettime(CLOCK_MONOTONIC, &ts);
-  return ((unsigned long long)ts.tv_sec * 1000000UL) + ts.tv_nsec/1000;
-}
-
-unsigned long long get_os_nsecs(void)
-{
-  struct timespec ts;
-
-  clock_gettime(CLOCK_MONOTONIC, &ts);
-  return ts.tv_sec * 1000000000UL + ts.tv_nsec;
-}
 */
 import "C"
 import (
@@ -56,7 +40,7 @@ func DpPolMod(w *PolDpWorkQ) int {
 		pa.ebs = C.uint(w.Ebs)
 		pa.tok_c = pa.cbs
 		pa.tok_e = pa.ebs
-		pa.lastc_uts = C.get_os_usecs()
+		pa.lastc_uts = get_os_usecs()
 		pa.laste_uts = pa.toksc_pus
 		pa.drop_prio = FLB_PIPE_COL_YELLOW
 

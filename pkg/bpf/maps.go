@@ -52,8 +52,16 @@ func ShowMap(mapName string, key, value interface{}) {
 		}
 	} else {
 		info, _ := pinMap.Info()
-		key = make([]byte, info.KeySize)
-		for pinMap.NextKey(key, key) == nil {
+		key := make([]byte, info.KeySize)
+		val := make([]byte, info.ValueSize)
+		iter := pinMap.Iterate()
+		for iter.Next(&key, &val) {
+			keyBytes, _ := json.MarshalIndent(key, "", " ")
+			valueBytes, _ := pinMap.LookupBytes(key)
+			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", valueBytes)
+		}
+
+		for pinMap.NextKey(&key, &key) == nil {
 			keyBytes, _ := json.MarshalIndent(key, "", " ")
 			valueBytes, _ := pinMap.LookupBytes(key)
 			fmt.Println(mapName, "key:", string(keyBytes), "=", "value:", valueBytes)

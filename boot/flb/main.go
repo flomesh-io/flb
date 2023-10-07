@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/flomesh-io/flb/pkg/bpf"
+	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
 )
@@ -48,16 +49,12 @@ func main() {
 	nodeNo := uint32(0)
 	loadAttachEBpf(nodeNo)
 
+	dp.FlbInit()
 	dpH := new(DpEbpfH)
 	nDp := lbnet.DpBrokerInit(dpH)
 
 	go restfullCliServer(nDp.ToDpCh)
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)
-
-	go func() {
-		time.Sleep(10 * time.Second)
-		bpf.ShowMap("rt_v4_map", nil, nil)
-	}()
 
 	go flbTicker()
 	wg.Wait()

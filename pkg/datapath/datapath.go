@@ -327,6 +327,38 @@ func llb_add_map_elem(tbl int, k, v interface{}) error {
 	return nil
 }
 
+func Llb_map_look_and_delete(tbl int, cb func(k, v interface{}) bool) {
+	if tbl < 0 || tbl >= LL_DP_MAX_MAP {
+		return
+	}
+	if cb == nil {
+		return
+	}
+	pinMap := xh.maps[tbl].emap
+
+	info, err := pinMap.Info()
+	if err != nil {
+		return
+	}
+
+	key := make([]byte, info.KeySize)
+	val := make([]byte, info.ValueSize)
+	iter := pinMap.Iterate()
+	for iter.Next(&key, &val) {
+		bytes, _ := pinMap.LookupBytes(&key)
+		// vs := (*dp_rt_tact)(unsafe.Pointer(&val))
+		// act := (*dp_rt_l3nh_act)(getPtrOffset(unsafe.Pointer(vs),
+		// 	sizeof_struct_dp_cmn_act))
+		// fmt.Println("vs.ca.cidx:", vs.ca.cidx)
+		// fmt.Println("vs.ca.cidx:", string(val))
+		fmt.Println(string(bytes))
+		// if cb(key, val) {
+		// 	//pinMap.Delete(&key)
+		// }
+	}
+	fmt.Println("Success...")
+}
+
 func llb_clear_map_stats(tid int, idx uint32) {
 	llb_clear_map_stats_internal(tid, idx, false)
 }

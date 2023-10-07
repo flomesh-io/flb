@@ -14,7 +14,6 @@ package datapath
 #include "../../ebpf/headers/linux/bpf.h"
 #include "../../ebpf/common/pdi.h"
 #include "../../ebpf/common/flb_dpapi.h"
-#include "../../ebpf/common/common_pdi.c"
 
 #cgo CFLAGS:  -I./../../ebpf/headers/linux -I./../../ebpf/common
 */
