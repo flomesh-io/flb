@@ -275,10 +275,6 @@ func DpInit(nodeNo uint32) {
 		emap.has_pb = false
 	}
 
-	setupCrc32cMap()
-	setupCtCtrMap(nodeNo)
-	setupCpuMap()
-	setupLiveCpuMap()
 	setupUfw4PdiMap()
 	setupUfw6PdiMap()
 }
@@ -443,62 +439,4 @@ func llb_del_map_elem_nat_post_proc(k, v interface{}) int {
 
 func ll_map_ct_rm_related(rid uint32, aids []uint16, naid int) {
 
-}
-
-func setupCrc32cMap() {
-	var i uint32
-	var crc uint32
-
-	// Generate crc32c table
-	for i = 0; i < 256; i++ {
-		crc = i
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		//crc = crc & 1 ? (crc >> 1) ^ 0x82f63b78 : crc >> 1;
-		for n := 0; n < 8; n++ {
-			if crc&1 > 0 {
-				crc = (crc >> 1) ^ 0x82f63b78
-			} else {
-				crc = crc >> 1
-			}
-		}
-		xh.maps[LL_DP_CRC32C_MAP].emap.Update(&i, &crc, ebpf.UpdateAny)
-	}
-}
-
-func setupCtCtrMap(nodeNo uint32) {
-	key := uint32(0)
-	ctr := new(dp_ct_ctrtact)
-	ctr.start = C.uint(FLB_CT_MAP_ENTRIES / FLB_MAX_LB_NODES * nodeNo)
-	ctr.counter = ctr.start
-	ctr.entries = ctr.start + C.uint(FLB_CT_MAP_ENTRIES/FLB_MAX_LB_NODES)
-	xh.maps[LL_DP_CTCTR_MAP].emap.Update(&key, ctr, ebpf.UpdateAny)
-}
-
-func setupCpuMap() {
-	if possibleCpus, err := internal.PossibleCPUs(); err == nil {
-		val := uint32(2048)
-		for i := 0; i < possibleCpus; i++ {
-			key := uint32(i)
-			xh.maps[LL_DP_CPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
-			xh.maps[LL_DP_CPU_MAP].max_entries = uint32(possibleCpus)
-		}
-	} else {
-		fmt.Println(err.Error())
-	}
-}
-
-func setupLiveCpuMap() {
-	if liveCpus, err := internal.PossibleCPUs(); err == nil {
-		key := uint32(0)
-		val := uint32(liveCpus)
-		xh.maps[LL_DP_LCPU_MAP].emap.Update(&key, &val, ebpf.UpdateAny)
-	} else {
-		fmt.Println(err.Error())
-	}
 }
