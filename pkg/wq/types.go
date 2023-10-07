@@ -330,7 +330,7 @@ func (q *RouteDpWorkQ) Key() string {
 }
 
 func (q *NatDpWorkQ) Key() string {
-	return fmt.Sprintf("daddr:%s,mark:%s,dport:%d,l4proto:%d,zone:%d", q.ServiceIP.String(), q.Mark, q.L4Port, q.Proto, q.ZoneNum)
+	return fmt.Sprintf("daddr:%s,mark:%d,dport:%d,l4proto:%d,zone:%d", q.ServiceIP.String(), q.Mark, q.L4Port, q.Proto, q.ZoneNum)
 }
 
 // DpRetT - an empty interface to represent immediate operation result

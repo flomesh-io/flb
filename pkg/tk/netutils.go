@@ -1,5 +1,6 @@
 package tk
 
+import "C"
 import (
 	"bufio"
 	"bytes"

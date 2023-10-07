@@ -4,48 +4,41 @@ import "C"
 import (
 	"net"
 
-	"github.com/flomesh-io/flb/pkg/bpf"
-	"github.com/flomesh-io/flb/pkg/config"
+	dp "github.com/flomesh-io/flb/pkg/datapath"
 )
 
-func loadAttachEBpf() {
-	if ret := bpf.LinkTapDev(config.TapDevName); ret == 0 {
-		bpf.LoadXdpProg()
-
-		setupCrc32cMap()
-		setupCtCtrMap(config.NodeNo)
-		setupCpuMap()
-		setupLiveCpuMap()
-
-		bpf.AttachXdpProg(config.TapDevName)
-		bpf.AttachTcProg(config.TapDevName)
+func loadAttachEBpf(nodeNo uint32) {
+	if ret := dp.LinkTapDev(dp.FLB_MGMT_CHANNEL); ret == 0 {
+		dp.LoadXdpProg()
+		dp.AttachXdpProg(dp.FLB_MGMT_CHANNEL)
+		dp.AttachTcProg(dp.FLB_MGMT_CHANNEL)
 	}
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.TapDevName {
+			if intf.Name == dp.FLB_MGMT_CHANNEL {
 				continue
 			}
-			bpf.AttachTcProg(intf.Name)
+			dp.AttachTcProg(intf.Name)
 		}
 	}
 }
 
 func unloadEBpf() {
-	bpf.DetachTcProg(config.TapDevName)
-	bpf.DetachXdpProg(config.TapDevName)
-	bpf.UnlinkTapDev(config.TapDevName)
+	dp.DetachTcProg(dp.FLB_MGMT_CHANNEL)
+	dp.DetachXdpProg(dp.FLB_MGMT_CHANNEL)
+	dp.UnlinkTapDev(dp.FLB_MGMT_CHANNEL)
 
 	ifList, err := net.Interfaces()
 	if err == nil {
 		for _, intf := range ifList {
-			if intf.Name == config.TapDevName {
+			if intf.Name == dp.FLB_MGMT_CHANNEL {
 				continue
 			}
-			bpf.DetachTcProg(intf.Name)
+			dp.DetachTcProg(intf.Name)
 		}
 	}
-	bpf.RemoveEBpfMaps()
-	bpf.UnloadXdpProg()
+	dp.RemoveEBpfMaps()
+	dp.UnloadXdpProg()
 }
