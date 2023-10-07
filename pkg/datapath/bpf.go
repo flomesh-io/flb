@@ -1974,6 +1974,14 @@ func RemoveEBpfMaps() {
 	}
 }
 
+func flb_add_map_elem(tbl int, k, v unsafe.Pointer) int {
+	return int(C.flb_add_map_elem(C.int(tbl), k, v))
+}
+
+func flb_del_map_elem(tbl int, k unsafe.Pointer) int {
+	return int(C.flb_del_map_elem(C.int(tbl), k))
+}
+
 func FLBInit() {
 	C.flb_init(nil)
 }
