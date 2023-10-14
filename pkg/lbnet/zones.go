@@ -209,3 +209,38 @@ func (z *ZoneH) ZonePortDelete(name string) (int, error) {
 
 	return 0, nil
 }
+
+// ZoneTicker - This ticker routine takes care of all house-keeping operations
+// for all instances of security zones. This is called from lbnetTicker
+func (z *ZoneH) ZoneTicker() {
+	for _, zone := range z.ZoneMap {
+
+		mh.mtx.Lock()
+		zone.L2.FdbsTicker()
+		zone.Nh.NeighsTicker()
+		mh.mtx.Unlock()
+
+		/* NOTE - No need to hold lock for an extended period */
+
+		mh.mtx.RLock()
+		zone.Rules.RulesTicker()
+		mh.mtx.RUnlock()
+
+		//mh.mtx.RLock()
+		//zone.Vlans.VlansTicker()
+		//mh.mtx.RUnlock()
+
+		//mh.mtx.RLock()
+		//zone.Rt.RoutesTicker()
+		//mh.mtx.RUnlock()
+
+		mh.mtx.RLock()
+		zone.Sess.SessionTicker()
+		mh.mtx.RUnlock()
+
+		mh.mtx.RLock()
+		zone.Pols.PolTicker()
+		zone.Mirrs.MirrTicker()
+		mh.mtx.RUnlock()
+	}
+}

@@ -9,46 +9,32 @@ import (
 
 	"github.com/gorilla/mux"
 
+	"github.com/flomesh-io/flb/pkg/cmn"
 	"github.com/flomesh-io/flb/pkg/tk"
-	. "github.com/flomesh-io/flb/pkg/wq"
 )
 
-func restfullCliServer(toDpCh chan interface{}) {
+type CliMeta struct {
+	LbRules []*cmn.LbRuleMod
+}
+
+func restCliServer(cliHook cmn.CliHookInterface) {
 	r := mux.NewRouter()
 	r.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 		bytes, err := io.ReadAll(req.Body)
 		if err != nil {
 			tk.LogIt(tk.LogError, "error restfull request: %v\n", err)
 		} else {
-			cliMeta := new(ArrayMeta)
+			cliMeta := new(CliMeta)
 			err = json.Unmarshal(bytes, cliMeta)
 			if err != nil {
 				tk.LogIt(tk.LogError, "error unmarshal restfull request: %v\n", err)
 			} else {
-				meta := NewMeta()
-				for _, v := range cliMeta.PortDpWorkQ {
-					meta.PortDpWorkQ[v.Key()] = v
+				for _, lbRule := range cliMeta.LbRules {
+					if _, err = cliHook.NetLbRuleAdd(lbRule); err != nil {
+						tk.LogIt(tk.LogError, "error NetLbRuleAdd: %v\n", err)
+						break
+					}
 				}
-				for _, v := range cliMeta.L2AddrDpWorkQ {
-					meta.L2AddrDpWorkQ[v.Key()] = v
-				}
-				for _, v := range cliMeta.RouteDpWorkQ {
-					meta.RouteDpWorkQ[v.Key()] = v
-				}
-				for _, v := range cliMeta.RouterMacDpWorkQ {
-					meta.RouterMacDpWorkQ[v.Key()] = v
-				}
-				for _, v := range cliMeta.NextHopDpWorkQ {
-					meta.NextHopDpWorkQ[v.Key()] = v
-				}
-				for _, v := range cliMeta.NatDpWorkQ {
-					meta.NatDpWorkQ[v.Key()] = v
-				}
-				bytes, _ = json.MarshalIndent(meta, "", " ")
-				fmt.Println(string(bytes))
-				syncDatapathMeta(toDpCh, func() (*MapMeta, bool) {
-					return meta, true
-				})
 			}
 		}
 		res.Header().Set("Content-Type", "application/json")

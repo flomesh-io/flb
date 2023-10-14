@@ -61,17 +61,6 @@ subsys-clean:
 go-mod-tidy:
 	@go mod tidy
 
-.PHONY: simulator-build
-simulator-build:
-	CGO_ENABLED=1 go build -v -o ./bin/simulator ./boot/simulator/*
-
-.PHONY: simulator-run
-simulator-run:
-	./bin/simulator
-
-.PHONY: simulator
-simulator: simulator-build simulator-run
-
 .PHONY: flb-build
 flb-build:
 	@CGO_ENABLED=1 go build -v -o ./bin/flb ./boot/flb/*

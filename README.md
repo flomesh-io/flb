@@ -41,12 +41,6 @@ make install-test-tools
 make subsys
 ```
 
-### 编译 netlink 模拟器
-
-```bash
-make simulator-build
-```
-
 ### 编译 flb
 
 ```bash
@@ -54,14 +48,6 @@ make flb-build
 ```
 
 ## 运行
-
-### 运行 netlink 模拟器
-
-```bash
-make simulator-run
-```
-
-### 运行 flb
 
 ```bash
 make flb-run

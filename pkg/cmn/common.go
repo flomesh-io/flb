@@ -479,8 +479,6 @@ type LbServiceArg struct {
 	BlockNum uint16 `json:"block"`
 	// Sel - one of LbSelRr,LbSelHash, or LbSelHash
 	Sel EpSelect `json:"sel"`
-	// Bgp - export this rule with goBGP
-	Bgp bool `json:"bgp"`
 	// Monitor - monitor end-points of this rule
 	Monitor bool `json:"monitor"`
 	// Mode - NAT mode
@@ -790,22 +788,16 @@ type CliHookInterface interface {
 	NetPolicerGet() ([]PolMod, error)
 	NetPolicerAdd(*PolMod) (int, error)
 	NetPolicerDel(*PolMod) (int, error)
-	NetCIStateMod(*HASMod) (int, error)
-	NetCIStateGet() ([]HASMod, error)
 	NetFwRuleAdd(*FwRuleMod) (int, error)
 	NetFwRuleDel(*FwRuleMod) (int, error)
 	NetFwRuleGet() ([]FwRuleMod, error)
 	NetEpHostAdd(fm *EndPointMod) (int, error)
 	NetEpHostDel(fm *EndPointMod) (int, error)
 	NetEpHostGet() ([]EndPointMod, error)
-	NetParamSet(param ParamMod) (int, error)
-	NetParamGet(param *ParamMod) (int, error)
-	NetGoBGPNeighAdd(nm *GoBGPNeighMod) (int, error)
-	NetGoBGPNeighDel(nm *GoBGPNeighMod) (int, error)
-	NetGoBGPGCAdd(gc *GoBGPGlobalConfig) (int, error)
 }
 
 // NetHookInterface - Go interface which needs to be implemented to talk to flbnet module
 type NetHookInterface interface {
 	NlpHookInterface
+	CliHookInterface
 }
