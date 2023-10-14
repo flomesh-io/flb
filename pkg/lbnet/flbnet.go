@@ -31,7 +31,7 @@ type flbNetH struct {
 
 var mh flbNetH
 
-func Start(dph DpHookInterface) (*Zone, *sync.RWMutex) {
+func Start(dpHook DpHookInterface) (*Zone, *sync.RWMutex) {
 	// Initialize logger and specify the log file
 	logfile := fmt.Sprintf("%s%s.log", "/var/log/flb", os.Getenv("HOSTNAME"))
 	logLevel := LogString2Level(opts.Opts.LogLevel)
@@ -48,7 +48,7 @@ func Start(dph DpHookInterface) (*Zone, *sync.RWMutex) {
 	mh.sumDis = opts.Opts.CSumDisable
 	mh.pProbe = opts.Opts.PassiveEPProbe
 
-	mh.dp = DpBrokerInit(dph)
+	mh.dp = DpBrokerInit(dpHook)
 
 	// Initialize the security zone subsystem
 	mh.zn = ZoneInit()

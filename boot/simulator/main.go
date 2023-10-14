@@ -23,17 +23,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	dph := initDpCacheH()
-	zone, mtx := lbnet.Start(dph)
+	dpHook := initDpCacheH()
+	zone, mtx := lbnet.Start(dpHook)
 
-	blpHook := netAPIInit(zone, mtx)
-	nlp.NlpRegister(blpHook)
+	nlHook := netAPIInit(zone, mtx)
+	nlp.NlpRegister(nlHook)
 	nlp.NlpInit(opts.Opts.BlackList)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", func(response http.ResponseWriter, request *http.Request) {
 		response.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(response).Encode(dph); err != nil {
+		if err := json.NewEncoder(response).Encode(dpHook); err != nil {
 			fmt.Println(err.Error())
 		}
 	}).Methods("GET")
