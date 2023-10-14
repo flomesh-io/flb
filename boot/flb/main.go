@@ -23,18 +23,6 @@ const (
 	NetlinkMetaURI = `http://127.0.0.1:18080`
 )
 
-//func simpleMain() {
-//	wg.Add(1)
-//	if success := setResourceLimit(); !success {
-//		fmt.Println(`Failed to increase RLIMIT_MEMLOCK limit!`)
-//		os.Exit(-1)
-//	}
-//	dpH := new(DpEbpfH)
-//	nDp := flbnet.DpBrokerInit(dpH)
-//	go syncDatapathMeta(nDp.ToDpCh)
-//	wg.Wait()
-//}
-
 func main() {
 	wg.Add(1)
 
@@ -44,8 +32,8 @@ func main() {
 	loadAttachEBpf(nodeNo)
 
 	dp.FLBInit()
-	dpH := new(DpEbpfH)
-	nDp := lbnet.DpBrokerInit(dpH)
+	dpHook := new(DpEbpfH)
+	nDp := lbnet.DpBrokerInit(dpHook)
 
 	go restfullCliServer(nDp.ToDpCh)
 	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)

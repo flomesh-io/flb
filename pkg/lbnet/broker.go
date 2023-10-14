@@ -63,12 +63,12 @@ type DpH struct {
 }
 
 // DpBrokerInit - initialize the DP broker subsystem
-func DpBrokerInit(dph DpHookInterface) *DpH {
+func DpBrokerInit(dpHook DpHookInterface) *DpH {
 	nDp := new(DpH)
 
 	nDp.ToDpCh = make(chan interface{}, DpWorkQLen)
 	nDp.ToFinCh = make(chan int)
-	nDp.DpHooks = dph
+	nDp.DpHooks = dpHook
 
 	go DpWorker(nDp, nDp.ToFinCh, nDp.ToDpCh)
 
