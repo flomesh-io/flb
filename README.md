@@ -35,7 +35,7 @@ make install-test-tools
 
 ## 编译
 
-### 编译 eBPF
+### 编译 eBPF & netlink
 
 ```bash
 make subsys
@@ -44,18 +44,18 @@ make subsys
 ### 编译 flb
 
 ```bash
-make flb-build
+make build
 ```
 
 ## 运行
 
 ```bash
-make flb-run
+make run
 ```
 
 ## 测试
 
-### 部署网络
+### 部署测试网络
 
 ```bash
 make -f Makefile.test.mk test-up

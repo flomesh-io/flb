@@ -8,10 +8,10 @@ import (
 
 	"github.com/jessevdk/go-flags"
 
-	"github.com/flomesh-io/flb/nlp"
 	opts "github.com/flomesh-io/flb/options"
 	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
+	"github.com/flomesh-io/flb/pkg/nlp"
 )
 
 func main() {
@@ -40,7 +40,7 @@ func main() {
 
 	nlHook := lbnet.NetAPIInit()
 	nlp.NlpRegister(nlHook)
-	nlp.NlpInit(opts.Opts.BlackList)
+	nlp.NlpInit()
 
 	go restCliServer(nlHook)
 

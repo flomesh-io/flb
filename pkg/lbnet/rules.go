@@ -16,8 +16,8 @@ import (
 
 	probing "github.com/prometheus-community/pro-bing"
 
-	"github.com/flomesh-io/flb/nlp"
 	"github.com/flomesh-io/flb/pkg/cmn"
+	"github.com/flomesh-io/flb/pkg/nlp"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )

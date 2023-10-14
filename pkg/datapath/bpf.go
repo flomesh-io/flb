@@ -1828,7 +1828,7 @@ import (
 	"strings"
 	"unsafe"
 
-	nl "github.com/vishvananda/netlink"
+	"github.com/vishvananda/netlink"
 
 	"github.com/flomesh-io/flb/pkg/tk"
 )
@@ -2170,19 +2170,19 @@ func hasLoadedTcProg(intfName string) bool {
 	}
 
 	//通过 netlink 系统调用 脚本实现
-	link, err := nl.LinkByName(intfName)
+	link, err := netlink.LinkByName(intfName)
 	if err != nil {
 		tk.LogIt(tk.LogWarning, "[DP] Port %s not found, error:%v\n", intfName, err)
 		return false
 	}
 
-	filters, err := nl.FilterList(link, nl.HANDLE_MIN_INGRESS)
+	filters, err := netlink.FilterList(link, netlink.HANDLE_MIN_INGRESS)
 	if err != nil {
 		tk.LogIt(tk.LogWarning, "[DP] Filter on %s not found, error:%v\n", intfName, err)
 		return false
 	}
 	for _, f := range filters {
-		if t, ok := f.(*nl.BpfFilter); ok {
+		if t, ok := f.(*netlink.BpfFilter); ok {
 			if strings.Contains(t.Name, "tc_packet_hook0") {
 				return true
 			}

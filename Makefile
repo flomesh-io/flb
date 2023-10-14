@@ -49,25 +49,35 @@ install-golang:
 install-test-tools:
 	@sudo apt -y install net-tools bridge-utils arping build-essential iproute2 tcpdump iputils-ping keepalived curl bash-completion
 
-subsys:
+subsys-ebpf:
 	@sudo mkdir -p /opt/flb/cert
 	@sudo cp ebpf/cert/* /opt/flb/cert/
 	@cd ebpf && make
 
-subsys-clean:
+subsys-ebpf-clean:
 	@cd ebpf && make clean
+
+subsys-netlink:
+	@cd netlink && make
+
+subsys-netlink-clean:
+	@cd netlink && make clean
+
+subsys: subsys-ebpf subsys-netlink
+
+subsys-clean: subsys-ebpf-clean subsys-netlink-clean
 
 .PHONY: go-mod-tidy
 go-mod-tidy:
 	@go mod tidy
 
-.PHONY: flb-build
-flb-build:
+.PHONY: build
+build:
 	@CGO_ENABLED=1 go build -v -o ./bin/flb ./boot/flb/*
 
-.PHONY: flb-run
-flb-run:
-	@./bin/flb
+.PHONY: run
+run:
+	@LD_LIBRARY_PATH=./netlink ./bin/flb
 
 .PHONY: flb
-flb: flb-build flb-run
+flb: build run
