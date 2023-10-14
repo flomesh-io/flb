@@ -35,7 +35,7 @@ func (e DpEbpfH) DpFwRuleDel(w *FwDpWorkQ) int {
 
 func (e DpEbpfH) DpStat(w *StatDpWorkQ) int {
 	//TODO implement me
-	panic("implement me")
+	return 0
 }
 
 func (e DpEbpfH) DpUlClAdd(w *UlClDpWorkQ) int {
