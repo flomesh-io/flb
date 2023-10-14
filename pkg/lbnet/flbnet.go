@@ -104,6 +104,7 @@ func lbnetTicker(shutdown func()) {
 				if shutdown != nil {
 					shutdown()
 				}
+				mh.wg.Done()
 			}
 		case t := <-mh.ticker.C:
 			tk.LogIt(-1, "Tick at %v\n", t)
