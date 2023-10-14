@@ -47,7 +47,8 @@ func main() {
 	zone, mtx := lbnet.Start(dpHook)
 
 	nlHook := netAPIInit(zone, mtx)
-	nlp.NlpRegister(nlHook)
+	nlHook.
+		nlp.NlpRegister(nlHook)
 	nlp.NlpInit(opts.Opts.BlackList)
 
 	go flbTicker()

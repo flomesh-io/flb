@@ -37,10 +37,10 @@ func DpRouteMod(w *RouteDpWorkQ) int {
 
 		kPtr[0] = uint8(w.ZoneNum >> 8 & 0xff)
 		kPtr[1] = uint8(w.ZoneNum & 0xff)
-		kPtr[2] = w.Dst.IP[12]
-		kPtr[3] = w.Dst.IP[13]
-		kPtr[4] = w.Dst.IP[14]
-		kPtr[5] = w.Dst.IP[15]
+		kPtr[2] = w.Dst.IP[0]
+		kPtr[3] = w.Dst.IP[1]
+		kPtr[4] = w.Dst.IP[2]
+		kPtr[5] = w.Dst.IP[3]
 		key = unsafe.Pointer(key4)
 		mapNum = LL_DP_RTV4_MAP
 		mapSnum = LL_DP_RTV4_STATS_MAP
