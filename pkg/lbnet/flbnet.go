@@ -97,9 +97,7 @@ func lbnetTicker(shutdown func()) {
 					wpid, _ = syscall.Wait4(-1, &ws, syscall.WNOHANG, &ru)
 					try++
 				}
-			} else if sig == syscall.SIGHUP {
-				tk.LogIt(tk.LogCritical, "SIGHUP received\n")
-			} else if sig == syscall.SIGINT || sig == syscall.SIGTERM {
+			} else if sig == syscall.SIGHUP || sig == syscall.SIGINT || sig == syscall.SIGTERM {
 				tk.LogIt(tk.LogCritical, "Shutdown on sig %v\n", sig)
 				// TODO - More subsystem cleanup TBD
 				mh.zr.Rules.RuleDestructAll()
