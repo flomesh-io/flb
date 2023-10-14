@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
 
+	"github.com/jessevdk/go-flags"
+
+	"github.com/flomesh-io/flb/nlp"
+	opts "github.com/flomesh-io/flb/options"
 	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/tk"
@@ -15,7 +20,6 @@ import (
 var (
 	wg     sync.WaitGroup
 	sigCh  = make(chan os.Signal, 5)
-	tDone  = make(chan bool)
 	ticker = time.NewTicker(10 * time.Second)
 )
 
@@ -24,6 +28,13 @@ const (
 )
 
 func main() {
+	// Parse command-line arguments
+	_, err := flags.Parse(&opts.Opts)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	wg.Add(1)
 
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGCHLD, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM)
@@ -33,20 +44,20 @@ func main() {
 
 	dp.FLBInit()
 	dpHook := new(DpEbpfH)
-	nDp := lbnet.DpBrokerInit(dpHook)
+	zone, mtx := lbnet.Start(dpHook)
 
-	go restfullCliServer(nDp.ToDpCh)
-	go syncDatapathMeta(nDp.ToDpCh, getNetlinkMeta)
+	nlHook := netAPIInit(zone, mtx)
+	nlp.NlpRegister(nlHook)
+	nlp.NlpInit(opts.Opts.BlackList)
 
 	go flbTicker()
+
 	wg.Wait()
 }
 
 func flbTicker() {
 	for {
 		select {
-		case <-tDone:
-			return
 		case sig := <-sigCh:
 			if sig == syscall.SIGCHLD {
 				var ws syscall.WaitStatus
