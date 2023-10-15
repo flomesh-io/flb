@@ -185,7 +185,44 @@ typedef struct nl_route_mod {
   struct nl_ipnet dst;
 } nl_route_mod_t;
 
-int nl_link_get(int ifi_index, nl_port_mod_t *port);
+#define CLS_BPF_NAME_LEN 256
+#define BPF_TAG_SIZE 8
+
+typedef struct nl_filter_mod {
+  __u32 index;
+  __u32 handle;
+  __u32 parent;
+  __u16 priority;
+  __u16 Protocol;
+  struct {
+    __u32 u32 : 1;
+    __u32 fw : 1;
+    __u32 bpf : 1;
+    __u32 matchall : 1;
+    __u32 generic_filter : 1;
+  } type;
+  union {
+    struct {
+    } u32;
+    struct {
+    } fw;
+    struct {
+      __u32 class_id;
+      __u32 fd;
+      __u8 name[CLS_BPF_NAME_LEN];
+      bool direct_action;
+      __u32 id;
+      __u8 tag[BPF_TAG_SIZE * 2 + 1];
+    } bpf;
+    struct {
+    } matchall;
+    struct {
+    } generic_filter;
+  } u;
+} nl_filter_mod_t;
+
+int nl_link_get_by_index(int ifi_index, nl_port_mod_t *port);
+int nl_link_get_by_name(const char *ifi_name, nl_port_mod_t *port);
 
 int nl_addr_list(nl_port_mod_t *port, __u8 family);
 int nl_neigh_list(nl_port_mod_t *port, __u8 family);
@@ -198,6 +235,8 @@ int nl_neigh_subscribe();
 int nl_route_subscribe();
 int nl_link_subscribe();
 
+bool nl_has_loaded_tc_prog(const char *ifi_name);
+
 static __u8 zero_mac[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
 
 static inline bool is_zero_mac(__u8 mac[ETH_ALEN]) {
@@ -207,7 +246,8 @@ static inline bool is_zero_mac(__u8 mac[ETH_ALEN]) {
   return false;
 }
 
-static inline void parse_rtattr(struct rtattr *tb[], int max, struct rtattr *rta, int len) {
+static inline void parse_rtattr(struct rtattr *tb[], int max,
+                                struct rtattr *rta, int len) {
   memset(tb, 0, sizeof(struct rtattr *) * (max + 1));
 
   while (RTA_OK(rta, len)) {

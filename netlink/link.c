@@ -109,7 +109,7 @@ int nl_link_mod(nl_port_mod_t *port, bool add) {
     } else {
       nl_port_mod_t mif;
       memset(&mif, 0, sizeof(nl_port_mod_t));
-      ret = nl_link_get(port->master_index, &mif);
+      ret = nl_link_get_by_index(port->master_index, &mif);
       if (ret < 0) {
         return ret;
       }
@@ -306,7 +306,7 @@ int nl_link_list_res(struct nl_msg *msg, void *arg) {
   nl_addr_list(&port, FAMILY_ALL);
   nl_neigh_list(&port, FAMILY_ALL);
   nl_route_list(&port, FAMILY_ALL);
-  // debug_link(&port);
+  debug_link(&port);
 
   return NL_OK;
 }
@@ -436,7 +436,7 @@ int nl_link_get_res(struct nl_msg *msg, void *arg) {
   return NL_OK;
 }
 
-int nl_link_get(int ifi_index, nl_port_mod_t *port) {
+int nl_link_get_by_index(int ifi_index, nl_port_mod_t *port) {
   struct nl_sock *socket = nl_socket_alloc();
   nl_connect(socket, NETLINK_ROUTE);
 
@@ -448,7 +448,7 @@ int nl_link_get(int ifi_index, nl_port_mod_t *port) {
       __u16 rta_len;
       __u16 rta_type;
       __u32 rta_val;
-    } rtattr;
+    } rta_ext_mask;
   } * nl_req;
 
   struct nlmsghdr *nlh = nlmsg_put(msg, NL_AUTO_PID, NL_AUTO_SEQ, RTM_GETLINK,
@@ -458,9 +458,59 @@ int nl_link_get(int ifi_index, nl_port_mod_t *port) {
   memset(nl_req, 0, sizeof(*nl_req));
   nl_req->ifh.ifi_family = AF_UNSPEC;
   nl_req->ifh.ifi_index = ifi_index;
-  nl_req->rtattr.rta_type = IFLA_EXT_MASK;
-  nl_req->rtattr.rta_len = 8;
-  nl_req->rtattr.rta_val = RTEXT_FILTER_VF;
+  nl_req->rta_ext_mask.rta_type = IFLA_EXT_MASK;
+  nl_req->rta_ext_mask.rta_len = 8;
+  nl_req->rta_ext_mask.rta_val = RTEXT_FILTER_VF;
+
+  int ret = nl_send_auto_complete(socket, msg);
+  if (ret < 0) {
+    nlmsg_free(msg);
+    nl_socket_free(socket);
+    return ret;
+  }
+
+  nl_socket_modify_cb(socket, NL_CB_VALID, NL_CB_CUSTOM, nl_link_get_res,
+                      (void *)(&port));
+  nl_recvmsgs_default(socket);
+
+  nlmsg_free(msg);
+  nl_socket_free(socket);
+
+  return ret;
+}
+
+int nl_link_get_by_name(const char *ifi_name, nl_port_mod_t *port) {
+  struct nl_sock *socket = nl_socket_alloc();
+  nl_connect(socket, NETLINK_ROUTE);
+
+  struct nl_msg *msg = nlmsg_alloc();
+
+  struct {
+    struct ifinfomsg ifh;
+    struct {
+      __u16 rta_len;
+      __u16 rta_type;
+      __u32 rta_val;
+    } rta_ext_mask;
+    struct {
+      __u16 rta_len;
+      __u16 rta_type;
+      __u8 rta_val[IF_NAMESIZE + 1];
+    } rta_ifi_name;
+  } * nl_req;
+
+  struct nlmsghdr *nlh = nlmsg_put(msg, NL_AUTO_PID, NL_AUTO_SEQ, RTM_GETLINK,
+                                   sizeof(*nl_req), NLM_F_REQUEST | NLM_F_ACK);
+
+  nl_req = nlmsg_data(nlh);
+  memset(nl_req, 0, sizeof(*nl_req));
+  nl_req->ifh.ifi_family = AF_UNSPEC;
+  nl_req->rta_ext_mask.rta_type = IFLA_EXT_MASK;
+  nl_req->rta_ext_mask.rta_len = 8;
+  nl_req->rta_ext_mask.rta_val = RTEXT_FILTER_VF;
+  nl_req->rta_ifi_name.rta_type = IFLA_IFNAME;
+  nl_req->rta_ifi_name.rta_len = strlen(ifi_name) + 5;
+  memcpy(nl_req->rta_ifi_name.rta_val, ifi_name, strlen(ifi_name));
 
   int ret = nl_send_auto_complete(socket, msg);
   if (ret < 0) {

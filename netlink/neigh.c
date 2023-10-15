@@ -45,7 +45,7 @@ int nl_neigh_mod(nl_neigh_mod_t *neigh, struct nl_port_mod *port, bool add) {
     if (port == NULL) {
       nl_port_mod_t l_port;
       memset(&l_port, 0, sizeof(l_port));
-      if (nl_link_get(neigh->link_index, &l_port) < 0) {
+      if (nl_link_get_by_index(neigh->link_index, &l_port) < 0) {
         return NL_SKIP;
       }
       port = &l_port;
@@ -91,7 +91,7 @@ int nl_neigh_mod(nl_neigh_mod_t *neigh, struct nl_port_mod *port, bool add) {
 
     if (neigh->master_index > 0) {
       nl_port_mod_t brLink;
-      if (nl_link_get(neigh->master_index, &brLink) < 0) {
+      if (nl_link_get_by_index(neigh->master_index, &brLink) < 0) {
         return -1;
       }
       if (memcmp(brLink.hwaddr, neigh->hwaddr, 6) == 0) {
@@ -116,7 +116,7 @@ int nl_neigh_mod(nl_neigh_mod_t *neigh, struct nl_port_mod *port, bool add) {
     if (port == NULL) {
       nl_port_mod_t l_port;
       memset(&l_port, 0, sizeof(l_port));
-      if (nl_link_get(neigh->link_index, &l_port) < 0) {
+      if (nl_link_get_by_index(neigh->link_index, &l_port) < 0) {
         return NL_SKIP;
       }
       port = &l_port;

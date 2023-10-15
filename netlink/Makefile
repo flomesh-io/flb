@@ -1,8 +1,8 @@
 #!make
 
 LIB    := nlp.so
-SRCS   := link.c neigh.c addr.c route.c
-OBJS   := link.o neigh.o addr.o route.o
+SRCS   := link.c neigh.c addr.c route.c filter.c
+OBJS   := link.o neigh.o addr.o route.o filter.o
 LDLIBS := $(shell pkg-config --libs   libnl-route-3.0 libnl-3.0)
 LDLIBS += -lev
 CFLAGS := $(shell pkg-config --cflags libnl-route-3.0 libnl-3.0)

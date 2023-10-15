@@ -45,7 +45,7 @@ int nl_addr_mod(nl_addr_mod_t *addr, struct nl_port_mod *port, bool add) {
   if (port == NULL) {
     nl_port_mod_t l_port;
     memset(&l_port, 0, sizeof(l_port));
-    if (nl_link_get(addr->link_index, &l_port) < 0) {
+    if (nl_link_get_by_index(addr->link_index, &l_port) < 0) {
       return NL_SKIP;
     }
     port = &l_port;

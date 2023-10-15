@@ -99,7 +99,7 @@ int nl_route_list_res(struct nl_msg *msg, void *arg) {
       } else {
         nl_port_mod_t l_port;
         memset(&l_port, 0, sizeof(l_port));
-        if (nl_link_get(rt_link_index, &l_port) < 0) {
+        if (nl_link_get_by_index(rt_link_index, &l_port) < 0) {
           return NL_SKIP;
         }
         port = &l_port;
@@ -143,7 +143,7 @@ int nl_route_list_res(struct nl_msg *msg, void *arg) {
     }
   }
 
-  //debug_route(&route);
+  // debug_route(&route);
   return nl_route_mod(&route, add);
 }
 

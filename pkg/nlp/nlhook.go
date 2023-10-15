@@ -37,6 +37,7 @@ import (
 	"fmt"
 	"net"
 	"time"
+	"unsafe"
 
 	"github.com/flomesh-io/flb/pkg/cmn"
 	"github.com/flomesh-io/flb/pkg/tk"
@@ -332,6 +333,12 @@ func net_route_del(route *C.struct_net_api_route_q) C.int {
 
 //export apply_config_map
 func apply_config_map(name *C.char, state, add C.bool) {
+}
+
+func HasLoadedTcProg(intfName string) bool {
+	ifiName := C.CString(intfName)
+	defer C.free(unsafe.Pointer(ifiName))
+	return bool(C.nl_has_loaded_tc_prog(ifiName))
 }
 
 func c6mac(chs [6]C.uchar) [6]byte {
