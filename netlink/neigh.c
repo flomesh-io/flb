@@ -42,8 +42,17 @@ int nl_neigh_mod(nl_neigh_mod_t *neigh, struct nl_port_mod *port, bool add) {
   }
 
   if (neigh->family == AF_INET || neigh->family == AF_INET6) {
+    if (port == NULL) {
+      nl_port_mod_t l_port;
+      memset(&l_port, 0, sizeof(l_port));
+      if (nl_link_get(neigh->link_index, &l_port) < 0) {
+        return NL_SKIP;
+      }
+      port = &l_port;
+    }
     struct net_api_neigh_q neigh_q;
     memset(&neigh_q, 0, sizeof(neigh_q));
+    memcpy(neigh_q.dev, port->name, IF_NAMESIZE);
     if (neigh->ip.f.v4) {
       struct in_addr *in = (struct in_addr *)neigh->ip.v4.bytes;
       inet_ntop(AF_INET, in, (char *)neigh_q.ip, INET_ADDRSTRLEN);
@@ -134,12 +143,12 @@ int nl_neigh_mod(nl_neigh_mod_t *neigh, struct nl_port_mod *port, bool add) {
 
     struct net_api_fdb_q fdb_q;
     memset(&fdb_q, 0, sizeof(fdb_q));
+    fdb_q.fdb_type = ftype;
     fdb_q.bridge_id = brId;
     memcpy(fdb_q.mac_addr, neigh->hwaddr, ETH_ALEN);
+    memcpy(fdb_q.dev, port->name, IF_NAMESIZE);
+    memcpy(fdb_q.dst, dst, INET6_ADDRSTRLEN);
     if (add) {
-      fdb_q.fdb_type = ftype;
-      memcpy(fdb_q.dev, port->name, IF_NAMESIZE);
-      memcpy(fdb_q.dst, dst, INET6_ADDRSTRLEN);
       return net_fdb_add(&fdb_q);
     } else {
       return net_fdb_del(&fdb_q);

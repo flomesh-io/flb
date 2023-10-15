@@ -36,9 +36,14 @@ import "C"
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/flomesh-io/flb/pkg/cmn"
 	"github.com/flomesh-io/flb/pkg/tk"
+)
+
+var (
+	debug_c_log = false
 )
 
 //export net_port_add
@@ -212,8 +217,7 @@ func net_neigh_add(neigh *C.struct_net_api_neigh_q) C.int {
 	linkIndex := int(neigh.link_index)
 	state := int(neigh.state)
 	hwaddr := net.HardwareAddr(c6bytes(neigh.hwaddr))
-	//todo pending
-	name := "TODO"
+	name := c16str(neigh.dev)
 
 	ret, err := hooks.NetNeighAdd(&cmn.NeighMod{
 		IP:           ip,
@@ -237,8 +241,7 @@ func net_neigh_del(neigh *C.struct_net_api_neigh_q) C.int {
 	printf("\n")
 
 	ip := net.ParseIP(c46str(neigh.ip))
-	//todo pending
-	name := "TODO"
+	name := c16str(neigh.dev)
 
 	ret, err := hooks.NetNeighDel(&cmn.NeighMod{IP: ip})
 	if err != nil {
@@ -349,6 +352,7 @@ func net_addr_del(addr *C.struct_net_api_addr_q) C.int {
 
 //export net_route_add
 func net_route_add(route *C.struct_net_api_route_q) C.int {
+	time.Sleep(100 * time.Millisecond)
 	printf("net_route_add ")
 	printf("Protocol: %2d ", route.protocol)
 	printf("Flags: %2d ", route.flags)
@@ -398,7 +402,6 @@ func net_route_del(route *C.struct_net_api_route_q) C.int {
 	printf("\n")
 
 	_, ipNet, _ := net.ParseCIDR(c50str(route.dst))
-	// TODO
 	gw := net.ParseIP(c46str(route.gw))
 
 	ret, err := hooks.NetRouteDel(&cmn.RouteMod{Dst: *ipNet})
@@ -472,7 +475,10 @@ func c50str(chs [50]C.uchar) string {
 }
 
 func printf(format string, args ...any) (n int, err error) {
-	return fmt.Printf(format, args...)
+	if debug_c_log {
+		return fmt.Printf(format, args...)
+	}
+	return 0, nil
 }
 
 func netlinkMonitor() {
@@ -482,12 +488,12 @@ func netlinkMonitor() {
 		C.nl_link_subscribe()
 	}()
 	go func() {
+		C.nl_addr_subscribe()
+	}()
+	go func() {
 		C.nl_neigh_subscribe()
 	}()
 	go func() {
 		C.nl_route_subscribe()
-	}()
-	go func() {
-		C.nl_link_subscribe()
 	}()
 }

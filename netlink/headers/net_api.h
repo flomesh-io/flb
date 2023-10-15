@@ -40,6 +40,7 @@ struct net_api_vlan_port_q {
 };
 
 struct net_api_neigh_q {
+  __u8 dev[IF_NAMESIZE];
   __u8 ip[INET6_ADDRSTRLEN];
   __u32 link_index;
   __u32 state;

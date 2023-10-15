@@ -785,9 +785,9 @@ func NlpInit(blackList string) *NlH {
 	nNl.FromRUCh = make(chan nl.RouteUpdate, cmn.RuWorkQLen)
 	nNl.IMap = make(map[string]Intf)
 
-	checkInit := make(chan bool)
-	go NlpGet(checkInit)
-	<-checkInit
+	// checkInit := make(chan bool)
+	// go NlpGet(checkInit)
+	// <-checkInit
 
 	err := nl.LinkSubscribe(nNl.FromLUCh, nNl.FromLUDone)
 	if err != nil {
