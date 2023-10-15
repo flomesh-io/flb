@@ -12,6 +12,8 @@ import (
 	dp "github.com/flomesh-io/flb/pkg/datapath"
 	"github.com/flomesh-io/flb/pkg/lbnet"
 	"github.com/flomesh-io/flb/pkg/nlp"
+
+	gonlp "github.com/flomesh-io/flb/nlp"
 )
 
 func main() {
@@ -39,6 +41,8 @@ func main() {
 	}
 
 	nlHook := lbnet.NetAPIInit()
+	gonlp.NlpRegister(nlHook)
+	gonlp.NlpInit("none")
 	nlp.NlpRegister(nlHook)
 	nlp.NlpInit()
 
