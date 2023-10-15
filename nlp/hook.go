@@ -613,7 +613,7 @@ func LUWorker(ch chan nl.LinkUpdate, f chan struct{}) {
 
 func AUWorker(ch chan nl.AddrUpdate, f chan struct{}) {
 
-	for n := 0; n < cmn.AuWorkqLen; n++ {
+	for n := 0; n < cmn.AuWorkQLen; n++ {
 		select {
 		case m := <-ch:
 			AUWorkSingle(m)
@@ -775,7 +775,7 @@ func NlpInit(blackList string) *NlH {
 	nNl.BlackList = blackList
 	nNl.BLRgx = regexp.MustCompile(blackList)
 
-	nNl.FromAUCh = make(chan nl.AddrUpdate, cmn.AuWorkqLen)
+	nNl.FromAUCh = make(chan nl.AddrUpdate, cmn.AuWorkQLen)
 	nNl.FromLUCh = make(chan nl.LinkUpdate, cmn.LuWorkQLen)
 	nNl.FromNUCh = make(chan nl.NeighUpdate, cmn.NuWorkQLen)
 	nNl.FromRUCh = make(chan nl.RouteUpdate, cmn.RuWorkQLen)

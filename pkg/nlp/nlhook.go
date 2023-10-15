@@ -45,46 +45,46 @@ import (
 var (
 	debug_c_log = false
 
-	portUpdateCh     = make(chan *PortUpdate, cmn.LuWorkQLen)
-	vlanUpdateCh     = make(chan *VlanUpdate, cmn.LuWorkQLen)
-	vlanPortUpdateCh = make(chan *VlanPortUpdate, cmn.LuWorkQLen)
-	addrUpdateCh     = make(chan *AddrUpdate, cmn.AuWorkqLen)
-	neighUpdateCh    = make(chan *NeighUpdate, cmn.NuWorkQLen)
-	fdbUpdateCh      = make(chan *FdbUpdate, cmn.RuWorkQLen)
-	routeUpdateCh    = make(chan *RouteUpdate, cmn.RuWorkQLen)
+	portUpdateCh     = make(chan *portUpdate, cmn.LuWorkQLen)
+	vlanUpdateCh     = make(chan *vlanUpdate, cmn.LuWorkQLen)
+	vlanPortUpdateCh = make(chan *vlanPortUpdate, cmn.LuWorkQLen)
+	addrUpdateCh     = make(chan *addrUpdate, cmn.AuWorkQLen)
+	neighUpdateCh    = make(chan *neighUpdate, cmn.NuWorkQLen)
+	fdbUpdateCh      = make(chan *fdbUpdate, cmn.RuWorkQLen)
+	routeUpdateCh    = make(chan *routeUpdate, cmn.RuWorkQLen)
 )
 
-type PortUpdate struct {
+type portUpdate struct {
 	delete bool
 	msg    C.struct_net_api_port_q
 }
 
-type VlanUpdate struct {
+type vlanUpdate struct {
 	delete bool
 	msg    C.struct_net_api_vlan_q
 }
 
-type VlanPortUpdate struct {
+type vlanPortUpdate struct {
 	delete bool
 	msg    C.struct_net_api_vlan_port_q
 }
 
-type AddrUpdate struct {
+type addrUpdate struct {
 	delete bool
 	msg    C.struct_net_api_addr_q
 }
 
-type NeighUpdate struct {
+type neighUpdate struct {
 	delete bool
 	msg    C.struct_net_api_neigh_q
 }
 
-type FdbUpdate struct {
+type fdbUpdate struct {
 	delete bool
 	msg    C.struct_net_api_fdb_q
 }
 
-type RouteUpdate struct {
+type routeUpdate struct {
 	delete bool
 	msg    C.struct_net_api_route_q
 }
@@ -108,7 +108,7 @@ func net_port_add(port *C.struct_net_api_port_q) C.int {
 	printf("TunDst: %-20s ", c16str(port.tun_dst))
 	printf("\n")
 
-	portUpdateCh <- &PortUpdate{
+	portUpdateCh <- &portUpdate{
 		delete: false,
 		msg:    *port,
 	}
@@ -122,7 +122,7 @@ func net_port_del(port *C.struct_net_api_port_q) C.int {
 	printf("Dev: %-16s ", c16str(port.dev))
 	printf("\n")
 
-	portUpdateCh <- &PortUpdate{
+	portUpdateCh <- &portUpdate{
 		delete: true,
 		msg:    *port,
 	}
@@ -145,7 +145,7 @@ func net_vlan_add(vlan *C.struct_net_api_vlan_q) C.int {
 	printf("TunID: %-4d ", vlan.tun_id)
 	printf("\n")
 
-	vlanUpdateCh <- &VlanUpdate{
+	vlanUpdateCh <- &vlanUpdate{
 		delete: false,
 		msg:    *vlan,
 	}
@@ -159,7 +159,7 @@ func net_vlan_del(vlan *C.struct_net_api_vlan_q) C.int {
 	printf("VID: %-3d ", vlan.vid)
 	printf("\n")
 
-	vlanUpdateCh <- &VlanUpdate{
+	vlanUpdateCh <- &vlanUpdate{
 		delete: true,
 		msg:    *vlan,
 	}
@@ -175,7 +175,7 @@ func net_vlan_port_add(vlan_port *C.struct_net_api_vlan_port_q) C.int {
 	printf("VID: %-3d ", vlan_port.vid)
 	printf("\n")
 
-	vlanPortUpdateCh <- &VlanPortUpdate{
+	vlanPortUpdateCh <- &vlanPortUpdate{
 		delete: false,
 		msg:    *vlan_port,
 	}
@@ -191,7 +191,7 @@ func net_vlan_port_del(vlan_port *C.struct_net_api_vlan_port_q) C.int {
 	printf("VID: %-3d ", vlan_port.vid)
 	printf("\n")
 
-	vlanPortUpdateCh <- &VlanPortUpdate{
+	vlanPortUpdateCh <- &vlanPortUpdate{
 		delete: true,
 		msg:    *vlan_port,
 	}
@@ -210,7 +210,7 @@ func net_neigh_add(neigh *C.struct_net_api_neigh_q) C.int {
 		neigh.hwaddr[4], neigh.hwaddr[5])
 	printf("\n")
 
-	neighUpdateCh <- &NeighUpdate{
+	neighUpdateCh <- &neighUpdate{
 		delete: false,
 		msg:    *neigh,
 	}
@@ -224,7 +224,7 @@ func net_neigh_del(neigh *C.struct_net_api_neigh_q) C.int {
 	printf("IP: %-33s ", c46str(neigh.ip))
 	printf("\n")
 
-	neighUpdateCh <- &NeighUpdate{
+	neighUpdateCh <- &neighUpdate{
 		delete: true,
 		msg:    *neigh,
 	}
@@ -244,7 +244,7 @@ func net_fdb_add(fdb *C.struct_net_api_fdb_q) C.int {
 	printf("Type: %d ", fdb.fdb_type)
 	printf("\n")
 
-	fdbUpdateCh <- &FdbUpdate{
+	fdbUpdateCh <- &fdbUpdate{
 		delete: false,
 		msg:    *fdb,
 	}
@@ -261,7 +261,7 @@ func net_fdb_del(fdb *C.struct_net_api_fdb_q) C.int {
 	printf("BridgeID: %d ", fdb.bridge_id)
 	printf("\n")
 
-	fdbUpdateCh <- &FdbUpdate{
+	fdbUpdateCh <- &fdbUpdate{
 		delete: true,
 		msg:    *fdb,
 	}
@@ -276,7 +276,7 @@ func net_addr_add(addr *C.struct_net_api_addr_q) C.int {
 	printf("IP: %-33s", c50str(addr.ip))
 	printf("\n")
 
-	addrUpdateCh <- &AddrUpdate{
+	addrUpdateCh <- &addrUpdate{
 		delete: false,
 		msg:    *addr,
 	}
@@ -290,7 +290,7 @@ func net_addr_del(addr *C.struct_net_api_addr_q) C.int {
 	printf("Dev: %-8s ", c16str(addr.dev))
 	printf("IP: %-33s", c50str(addr.ip))
 
-	addrUpdateCh <- &AddrUpdate{
+	addrUpdateCh <- &addrUpdate{
 		delete: true,
 		msg:    *addr,
 	}
@@ -308,7 +308,7 @@ func net_route_add(route *C.struct_net_api_route_q) C.int {
 	printf("Gw: %-33s ", c46str(route.gw))
 	printf("\n")
 
-	routeUpdateCh <- &RouteUpdate{
+	routeUpdateCh <- &routeUpdate{
 		delete: false,
 		msg:    *route,
 	}
@@ -322,7 +322,7 @@ func net_route_del(route *C.struct_net_api_route_q) C.int {
 	printf("Dst: %-33s ", c50str(route.dst))
 	printf("\n")
 
-	routeUpdateCh <- &RouteUpdate{
+	routeUpdateCh <- &routeUpdate{
 		delete: true,
 		msg:    *route,
 	}
@@ -387,18 +387,18 @@ func printf(format string, args ...any) (n int, err error) {
 	return 0, nil
 }
 
-func PortUpdateWorker(ch chan *PortUpdate) {
+func portUpdateWorker(ch chan *portUpdate) {
 	for n := 0; n < cmn.LuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			PortUpdateWorkSingle(m)
+			portUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func PortUpdateWorkSingle(m *PortUpdate) {
+func portUpdateWorkSingle(m *portUpdate) {
 	if !m.delete {
 		name := c16str(m.msg.dev)
 		idx := int(m.msg.link_index)
@@ -408,12 +408,12 @@ func PortUpdateWorkSingle(m *PortUpdate) {
 		state := bool(m.msg.state)
 		mtu := int(m.msg.mtu)
 		master := c16str(m.msg.master)
-		real := c16str(m.msg.real)
+		realv := c16str(m.msg.real)
 		tunId := int(m.msg.tun_id)
 		tunDst := net.ParseIP(c16str(m.msg.tun_dst))
 		tunSrc := net.ParseIP(c16str(m.msg.tun_src))
 		_, err := hooks.NetPortAdd(&cmn.PortMod{Dev: name, LinkIndex: idx, Ptype: pType, MacAddr: ifMac,
-			Link: linkState, State: state, Mtu: mtu, Master: master, Real: real,
+			Link: linkState, State: state, Mtu: mtu, Master: master, Real: realv,
 			TunID: tunId, TunDst: tunDst, TunSrc: tunSrc})
 		if err != nil {
 			tk.LogIt(tk.LogError, "[NLP] Port %v, %v, %v, %v add failed, err: %s\n", name, ifMac, state, mtu, err.Error())
@@ -435,18 +435,18 @@ func PortUpdateWorkSingle(m *PortUpdate) {
 	}
 }
 
-func VlanUpdateWorker(ch chan *VlanUpdate) {
+func vlanUpdateWorker(ch chan *vlanUpdate) {
 	for n := 0; n < cmn.LuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			VlanUpdateWorkSingle(m)
+			vlanUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func VlanUpdateWorkSingle(m *VlanUpdate) {
+func vlanUpdateWorkSingle(m *vlanUpdate) {
 	if !m.delete {
 		vid := int(m.msg.vid)
 		name := c16str(m.msg.dev)
@@ -477,18 +477,18 @@ func VlanUpdateWorkSingle(m *VlanUpdate) {
 	}
 }
 
-func VlanPortUpdateWorker(ch chan *VlanPortUpdate) {
+func vlanPortUpdateWorker(ch chan *vlanPortUpdate) {
 	for n := 0; n < cmn.LuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			VlanPortUpdateWorkSingle(m)
+			vlanPortUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func VlanPortUpdateWorkSingle(m *VlanPortUpdate) {
+func vlanPortUpdateWorkSingle(m *vlanPortUpdate) {
 	if !m.delete {
 		vid := int(m.msg.vid)
 		name := c16str(m.msg.dev)
@@ -514,18 +514,18 @@ func VlanPortUpdateWorkSingle(m *VlanPortUpdate) {
 	}
 }
 
-func AddrUpdateWorker(ch chan *AddrUpdate) {
-	for n := 0; n < cmn.AuWorkqLen; n++ {
+func addrUpdateWorker(ch chan *addrUpdate) {
+	for n := 0; n < cmn.AuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			AddrUpdateWorkSingle(m)
+			addrUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func AddrUpdateWorkSingle(m *AddrUpdate) {
+func addrUpdateWorkSingle(m *addrUpdate) {
 	if !m.delete {
 		name := c16str(m.msg.dev)
 		ipStr := c50str(m.msg.ip)
@@ -547,18 +547,18 @@ func AddrUpdateWorkSingle(m *AddrUpdate) {
 	}
 }
 
-func NeighUpdateWorker(ch chan *NeighUpdate) {
+func neighUpdateWorker(ch chan *neighUpdate) {
 	for n := 0; n < cmn.NuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			NeighUpdateWorkSingle(m)
+			neighUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func NeighUpdateWorkSingle(m *NeighUpdate) {
+func neighUpdateWorkSingle(m *neighUpdate) {
 	if !m.delete {
 		ip := net.ParseIP(c46str(m.msg.ip))
 		linkIndex := int(m.msg.link_index)
@@ -592,18 +592,18 @@ func NeighUpdateWorkSingle(m *NeighUpdate) {
 	}
 }
 
-func FdbUpdateWorker(ch chan *FdbUpdate) {
+func fdbUpdateWorker(ch chan *fdbUpdate) {
 	for n := 0; n < cmn.RuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			FdbUpdateWorkSingle(m)
+			fdbUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func FdbUpdateWorkSingle(m *FdbUpdate) {
+func fdbUpdateWorkSingle(m *fdbUpdate) {
 	if !m.delete {
 		mac := c6mac(m.msg.mac_addr)
 		brId := int(m.msg.bridge_id)
@@ -639,18 +639,18 @@ func FdbUpdateWorkSingle(m *FdbUpdate) {
 	}
 }
 
-func RouteUpdateWorker(ch chan *RouteUpdate) {
+func routeUpdateWorker(ch chan *routeUpdate) {
 	for n := 0; n < cmn.RuWorkQLen; n++ {
 		select {
 		case m := <-ch:
-			RouteUpdateWorkSingle(m)
+			routeUpdateWorkSingle(m)
 		default:
 			continue
 		}
 	}
 }
 
-func RouteUpdateWorkSingle(m *RouteUpdate) {
+func routeUpdateWorkSingle(m *routeUpdate) {
 	if !m.delete {
 		protocol := int(m.msg.protocol)
 		flags := int(m.msg.flags)
@@ -705,20 +705,20 @@ func RouteUpdateWorkSingle(m *RouteUpdate) {
 	}
 }
 
-func NLWorker() {
+func nlpWorker() {
 	for { /* 务必以单线程按如下顺序执行 */
-		PortUpdateWorker(portUpdateCh)
-		VlanUpdateWorker(vlanUpdateCh)
-		VlanPortUpdateWorker(vlanPortUpdateCh)
-		AddrUpdateWorker(addrUpdateCh)
-		NeighUpdateWorker(neighUpdateCh)
-		FdbUpdateWorker(fdbUpdateCh)
-		RouteUpdateWorker(routeUpdateCh)
+		portUpdateWorker(portUpdateCh)
+		vlanUpdateWorker(vlanUpdateCh)
+		vlanPortUpdateWorker(vlanPortUpdateCh)
+		addrUpdateWorker(addrUpdateCh)
+		neighUpdateWorker(neighUpdateCh)
+		fdbUpdateWorker(fdbUpdateCh)
+		routeUpdateWorker(routeUpdateCh)
 		time.Sleep(500 * time.Millisecond)
 	}
 }
 
-func netlinkMonitor() {
+func nlpMonitor() {
 	C.nl_bridge_list()
 	C.nl_link_list()
 	go func() {
@@ -734,6 +734,6 @@ func netlinkMonitor() {
 		C.nl_route_subscribe()
 	}()
 	go func() {
-		NLWorker()
+		nlpWorker()
 	}()
 }

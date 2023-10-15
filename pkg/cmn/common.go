@@ -26,8 +26,8 @@ const (
 )
 
 const (
-	// AuWorkqLen - Address worker channel depth
-	AuWorkqLen = 1024
+	// AuWorkQLen - Address worker channel depth
+	AuWorkQLen = 1024
 	// LuWorkQLen - Link worker channel depth
 	LuWorkQLen = 1024
 	// NuWorkQLen - Neigh worker channel depth

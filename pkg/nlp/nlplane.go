@@ -9,5 +9,5 @@ func NlpRegister(hook cmn.NlpHookInterface) {
 }
 
 func NlpInit() {
-	netlinkMonitor()
+	nlpMonitor()
 }
