@@ -22,7 +22,7 @@ upgrade-kernel:
 .PHONY: install-depends
 install-depends:
 	@apt -y update
-	@sudo apt -y install $(clang) llvm libelf-dev libpcap-dev
+	@sudo apt -y install $(clang) llvm libelf-dev libpcap-dev libnl-route-3-dev libnl-3-dev libev-dev
 	@sudo apt -y install linux-tools-$(uname -r)
 	@sudo apt -y install elfutils dwarves
 	@arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && echo $arch && if [ "$arch" = "arm64" ] ; then apt install -y gcc-multilib-arm-linux-gnueabihf; else apt update && apt install -y gcc-multilib;fi
