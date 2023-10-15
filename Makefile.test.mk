@@ -108,12 +108,7 @@ test-down: $(DOWN_TARGETS)
 
 .PHONY: test-apply-lb
 test-apply-lb:
-	@curl -X PUT -H "Content-Type: application/json" -d '{"PortDpWorkQ":null,"L2AddrDpWorkQ":null,"RouteDpWorkQ":null,"RouterMacDpWorkQ":null,"NextHopDpWorkQ":null,"MirrDpWorkQ":null,"PolDpWorkQ":null,"NatDpWorkQ":[{"Work":1,"Status":null,"ZoneNum":1,"ServiceIP":"20.20.20.1","L4Port":8080,"BlockNum":0,"DsrMode":false,"CsumDis":false,"Proto":6,"Mark":1,"NatType":2,"EpSel":1,"InActTo":240,"EndPoints":[{"XIP":"31.31.31.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":false},{"XIP":"32.32.32.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":false},{"XIP":"33.33.33.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":false}],"SecIP":null}],"UlClDpWorkQ":null,"StatDpWorkQ":null,"TableDpWorkQ":null,"FwDpWorkQ":null,"PeerDpWorkQ":null}' http://127.0.0.1:19090
-
-.PHONY: test-apply-lb-inactive
-test-apply-lb-inactive:
-	@curl -X PUT -H "Content-Type: application/json" -d '{"PortDpWorkQ":null,"L2AddrDpWorkQ":null,"RouteDpWorkQ":null,"RouterMacDpWorkQ":null,"NextHopDpWorkQ":null,"MirrDpWorkQ":null,"PolDpWorkQ":null,"NatDpWorkQ":[{"Work":1,"Status":null,"ZoneNum":1,"ServiceIP":"20.20.20.1","L4Port":8080,"BlockNum":0,"DsrMode":false,"CsumDis":false,"Proto":6,"Mark":1,"NatType":2,"EpSel":1,"InActTo":240,"EndPoints":[{"XIP":"31.31.31.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":true},{"XIP":"32.32.32.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":true},{"XIP":"33.33.33.1","RIP":"0.0.0.0","XPort":8080,"Weight":1,"InActive":true}],"SecIP":null}],"UlClDpWorkQ":null,"StatDpWorkQ":null,"TableDpWorkQ":null,"FwDpWorkQ":null,"PeerDpWorkQ":null}' http://127.0.0.1:19090
-
+	@curl -X PUT -H "Content-Type: application/json" -d '{"LbRules":[{"serviceArguments":{"externalIP":"20.20.20.1","port":8080,"protocol":"tcp","block":0,"sel":0,"monitor":false,"mode":0,"inactiveTimeout":0,"managed":false,"probetype":"","probeport":0,"probereq":"","proberesp":""},"secondaryIPs":null,"endpoints":[{"endpointIP":"31.31.31.1","targetPort":8080,"weight":1,"state":""},{"endpointIP":"32.32.32.1","targetPort":8080,"weight":1,"state":""},{"endpointIP":"33.33.33.1","targetPort":8080,"weight":1,"state":""}]}]}' http://127.0.0.1:19090
 
 .PHONY: test
 test:

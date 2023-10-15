@@ -7,30 +7,8 @@ import (
 // This file defines the go interface implementation needed to interact with flbnet go module
 
 const (
-	// CIStateMaster - HA Master state
-	CIStateMaster = 1 + iota
-	// CIStateBackup - HA Backup/Slave state
-	CIStateBackup
-	// CIStateConflict - HA Fault/Conflict State
-	CIStateConflict
-	// CIStateNotDefined - HA State not enabled or stopped
-	CIStateNotDefined
-)
-
-const (
 	// CIDefault - Default CI Instance name
 	CIDefault = "default"
-)
-
-const (
-	// HighLocalPref - High local preference for advertising BGP route(Default or Master)
-	HighLocalPref = 5000
-	// LowLocalPref - Low local preference for advertising BGP route(Backup)
-	LowLocalPref = 100
-	// HighMed - Low metric means higher probability for selection outiside AS
-	HighMed = 10
-	// LowMed - High metric means lower probability for selection outiside AS
-	LowMed = 20
 )
 
 const (
@@ -48,8 +26,8 @@ const (
 )
 
 const (
-	// AuWorkqLen - Address worker channel depth
-	AuWorkqLen = 1024
+	// AuWorkQLen - Address worker channel depth
+	AuWorkQLen = 1024
 	// LuWorkQLen - Link worker channel depth
 	LuWorkQLen = 1024
 	// NuWorkQLen - Neigh worker channel depth
@@ -479,8 +457,6 @@ type LbServiceArg struct {
 	BlockNum uint16 `json:"block"`
 	// Sel - one of LbSelRr,LbSelHash, or LbSelHash
 	Sel EpSelect `json:"sel"`
-	// Bgp - export this rule with goBGP
-	Bgp bool `json:"bgp"`
 	// Monitor - monitor end-points of this rule
 	Monitor bool `json:"monitor"`
 	// Mode - NAT mode
@@ -570,23 +546,6 @@ type SessTun struct {
 type ParamMod struct {
 	// LogLevel - log level of flb
 	LogLevel string `json:"logLevel"`
-}
-
-// GoBGPGlobalConfig - Info related to goBGP global config
-type GoBGPGlobalConfig struct {
-	// Local AS number
-	LocalAs int64 `json:"localAs,omitempty"`
-	// BGP Router ID
-	RouterID   string `json:"routerId,omitempty"`
-	SetNHSelf  bool   `json:"setNextHopSelf,omitempty"`
-	ListenPort uint16 `json:"listenPort,omitempty"`
-}
-
-// GoBGPNeighMod - Info related to goBGP neigh
-type GoBGPNeighMod struct {
-	Addr       net.IP `json:"neighIP"`
-	RemoteAS   uint32 `json:"remoteAS"`
-	RemotePort uint16 `json:"remotePort"`
 }
 
 // Equal - check if two session tunnel entries are equal
@@ -790,22 +749,16 @@ type CliHookInterface interface {
 	NetPolicerGet() ([]PolMod, error)
 	NetPolicerAdd(*PolMod) (int, error)
 	NetPolicerDel(*PolMod) (int, error)
-	NetCIStateMod(*HASMod) (int, error)
-	NetCIStateGet() ([]HASMod, error)
 	NetFwRuleAdd(*FwRuleMod) (int, error)
 	NetFwRuleDel(*FwRuleMod) (int, error)
 	NetFwRuleGet() ([]FwRuleMod, error)
 	NetEpHostAdd(fm *EndPointMod) (int, error)
 	NetEpHostDel(fm *EndPointMod) (int, error)
 	NetEpHostGet() ([]EndPointMod, error)
-	NetParamSet(param ParamMod) (int, error)
-	NetParamGet(param *ParamMod) (int, error)
-	NetGoBGPNeighAdd(nm *GoBGPNeighMod) (int, error)
-	NetGoBGPNeighDel(nm *GoBGPNeighMod) (int, error)
-	NetGoBGPGCAdd(gc *GoBGPGlobalConfig) (int, error)
 }
 
 // NetHookInterface - Go interface which needs to be implemented to talk to flbnet module
 type NetHookInterface interface {
 	NlpHookInterface
+	CliHookInterface
 }

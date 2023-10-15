@@ -16,8 +16,8 @@ import (
 
 	probing "github.com/prometheus-community/pro-bing"
 
-	"github.com/flomesh-io/flb/nlp"
 	"github.com/flomesh-io/flb/pkg/cmn"
+	"github.com/flomesh-io/flb/pkg/nlp"
 	"github.com/flomesh-io/flb/pkg/tk"
 	. "github.com/flomesh-io/flb/pkg/wq"
 )
@@ -247,7 +247,6 @@ type ruleEnt struct {
 	ci      string
 	hChk    ruleProbe
 	managed bool
-	bgp     bool
 	sT      time.Time
 	iTo     uint32
 	act     ruleAct
@@ -717,7 +716,6 @@ func (R *RuleH) GetNatLbRule() ([]cmn.LbRuleMod, error) {
 		ret.Serv.Mode = data.act.action.(*ruleNatActs).mode
 		ret.Serv.Monitor = data.hChk.actChk
 		ret.Serv.InactiveTimeout = data.iTo
-		ret.Serv.Bgp = data.bgp
 		ret.Serv.BlockNum = data.tuples.pref
 		ret.Serv.Managed = data.managed
 		ret.Serv.ProbeType = data.hChk.prbType
@@ -1190,7 +1188,6 @@ func (R *RuleH) AddNatLbRule(serv cmn.LbServiceArg, servSecIPs []cmn.LbSecIPArg,
 	}
 	r.sT = time.Now()
 	r.iTo = serv.InactiveTimeout
-	r.bgp = serv.Bgp
 	r.ci = cmn.CIDefault
 
 	R.modNatEpHost(r, natActs.endPoints, true, activateProbe)
