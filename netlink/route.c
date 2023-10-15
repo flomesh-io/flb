@@ -40,7 +40,7 @@ int nl_route_mod(nl_route_mod_t *route, bool add) {
     struct in_addr *in = (struct in_addr *)route->dst.ip.v4.bytes;
     char a_str[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, in, a_str, INET_ADDRSTRLEN);
-    sprintf((char *)route_q.dst, "%s/%d ", a_str, route->dst.mask);
+    sprintf((char *)route_q.dst, "%s/%d", a_str, route->dst.mask);
   } else if (route->dst.ip.f.v6) {
     struct in6_addr *in = (struct in6_addr *)route->dst.ip.v6.bytes;
     char a_str[INET6_ADDRSTRLEN];
@@ -134,16 +134,16 @@ int nl_route_list_res(struct nl_msg *msg, void *arg) {
     __u8 *rta_val = (__u8 *)RTA_DATA(rta_addr);
     if (rta_addr->rta_len == 8) {
       route.dst.ip.f.v4 = 1;
+      route.dst.mask = rt_msg->rtm_dst_len;
       memcpy(route.dst.ip.v4.bytes, rta_val, 4);
-      route.dst.mask = 32;
     } else if (rta_addr->rta_len == 20) {
       route.dst.ip.f.v6 = 1;
+      route.dst.mask = rt_msg->rtm_dst_len;
       memcpy(route.dst.ip.v6.bytes, rta_val, 16);
-      route.dst.mask = 128;
     }
   }
 
-  // debug_route(&route);
+  //debug_route(&route);
   return nl_route_mod(&route, add);
 }
 
